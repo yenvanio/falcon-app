@@ -3,7 +3,7 @@ import {Sheet, SheetTrigger, SheetContent} from "@/app/components/ui/sheet"
 import MenuIcon from "@/app/components/ui/menu-icon";
 import {Button} from "@/app/components/ui/button";
 import AppIcon from "@/app/components/ui/app-icon";
-import {LoginDialog} from "@/app/login/login";
+import {LoginDialog} from "@/app/components/login/dialog";
 import {createClient} from "@/lib/supabase/client";
 
 export default async function UnauthedNavbar() {

@@ -1,4 +1,4 @@
-import handleOneLevelZodError from "@/app/login/form-error";
+import handleOneLevelZodError from "@/app/components/login/form-error";
 import {ZodError, ZodType} from "zod";
 
 type ZObjectType = ZodType<Record<string | number, unknown>>

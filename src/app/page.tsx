@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import UnauthedNavbar from "@/app/components/navigation/unauthed-navbar";
 
 export default function Home() {

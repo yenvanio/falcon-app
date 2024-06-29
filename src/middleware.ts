@@ -1,8 +1,8 @@
 import {type NextRequest, NextResponse} from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
-import {ResponseCookie} from "next/dist/compiled/@edge-runtime/cookies";
 
-const loggedInRoutes = ["/dashboard"];
+const loggedInRoutes = ["/home"];
+const loggedOutRoutes = ["/"];
 const authToken = 'sb-hufmgntltpmeoisjbcba-auth-token'
 
 export async function middleware(request: NextRequest) {
@@ -17,6 +17,11 @@ export async function middleware(request: NextRequest) {
     if (!token && loggedInRoutes.some((path) => request.nextUrl.pathname.startsWith(path))) {
         return NextResponse.redirect("http://localhost:3000/");
     }
+
+    // If token present for default route, redirect to home
+    // if (token && loggedOutRoutes.some((path) => request.nextUrl.pathname.startsWith(path))) {
+    //     return NextResponse.redirect("http://localhost:3000/home");
+    // }
 
     return NextResponse.next();
 }
