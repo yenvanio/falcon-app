@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from 'react';
 import {createClient} from "@/lib/supabase/client";
-import ItinerariesGrid from "@/app/components/display-itineraries/grid";
-import {ItineraryProps} from "@/app/components/display-itineraries/card";
+import ItinerariesGrid from "@/components/itinerary/grid";
+import {ItineraryProps} from "@/components/itinerary/card";
 
 interface ItinerariesGridClientProps {
-    initialItineraries: Map<string, ItineraryProps>;
+    initialItineraries: Map<number, ItineraryProps>;
     userId: string | undefined;
 }
 

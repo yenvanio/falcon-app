@@ -5,13 +5,13 @@ import {format} from "date-fns"
 import {Calendar as CalendarIcon} from "lucide-react"
 
 import {cn} from "@/lib/utils"
-import {Button} from "@/app/components/ui/button"
-import {Calendar} from "@/app/components/ui/calendar"
+import {Button} from "@/components/ui/button"
+import {Calendar} from "@/components/ui/calendar"
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@/app/components/ui/popover"
+} from "@/components/ui/popover"
 import {ControllerRenderProps, FieldValues} from "react-hook-form";
 
 interface DateRange {

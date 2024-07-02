@@ -1,6 +1,6 @@
 "use client"
 
-import {Button} from "@/app/components/ui/button"
+import {Button} from "@/components/ui/button"
 import {
     Dialog,
     DialogContent,
@@ -8,20 +8,20 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/app/components/ui/dialog"
-import {Label} from "@/app/components/ui/label"
+} from "@/components/ui/dialog"
+import {Label} from "@/components/ui/label"
 import React, {useState} from "react"
 import {z} from "zod";
 import {createClient} from "@/lib/supabase/client";
-import {handleZodValidation, ValidationError} from "@/app/components/login/form-validation";
+import {handleZodValidation, ValidationError} from "@/components/auth/login/form-validation";
 import {useRouter} from "next/navigation";
-import {Form, FormField, FormItem, FormLabel, FormMessage} from "@/app/components/ui/form";
+import {Form, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
-import {Input} from "@/app/components/ui/input";
+import {Input} from "@/components/ui/input";
 import {AuthError} from "@supabase/auth-js";
-import {Toaster} from "@/app/components/ui/toaster";
-import {toast} from "@/app/components/ui/use-toast";
+import {Toaster} from "@/components/ui/toaster";
+import {toast} from "@/components/ui/use-toast";
 
 interface FormFieldType {
     name: "email" | "password"
@@ -33,6 +33,8 @@ interface FormFieldType {
 export const LoginDialog = (props: { nextUrl?: string }) => {
     const [isLogin, setIsLogin] = React.useState(true)
     const [authError, setAuthError] = React.useState<AuthError | null>(null);
+    const [open, setOpen] = useState(false);
+
     const supabase = createClient()
     const router = useRouter();
 
@@ -83,7 +85,10 @@ export const LoginDialog = (props: { nextUrl?: string }) => {
             return
         }
 
+        setOpen(false)
+
         router.replace("/home")
+        router.refresh()
     }
 
     async function signup(values: z.infer<typeof formSchema>) {
@@ -102,11 +107,18 @@ export const LoginDialog = (props: { nextUrl?: string }) => {
             return
         }
 
+        toast({
+            title: "Signup Successful!",
+            description: "Check your e-mail for a verification link."
+        })
+
+        setOpen(false)
+
         router.replace("/home")
     }
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button
                     className="h-10 rounded-md bg-slate-900 hover:bg-slate-100 hover:text-slate-950 text-slate-50 px-5">Login</Button>

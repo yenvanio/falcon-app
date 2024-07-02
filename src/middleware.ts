@@ -1,7 +1,7 @@
 import {type NextRequest, NextResponse} from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
-const loggedInRoutes = ["/home"];
+const loggedInRoutes = ["/home", "/plan/:id"];
 const loggedOutRoutes = ["/"];
 const authToken = 'sb-hufmgntltpmeoisjbcba-auth-token'
 

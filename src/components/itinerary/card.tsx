@@ -1,11 +1,11 @@
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/app/components/ui/card";
-import FormattedDate from "@/app/components/date/formatted-date"
-import FormattedDateRange from "@/app/components/date/formatted-date";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
+import FormattedDateRange from "@/components/date/formatted-date";
+import {useRouter} from "next/navigation";
 
-type ItineraryRole = 'OWNER' | 'COLLABORATOR' | 'FOLLOWER'
+export type ItineraryRole = 'OWNER' | 'COLLABORATOR' | 'FOLLOWER'
 
 export interface ItineraryProps {
-    id: string
+    id: number
     name: string
     start_date: string
     end_date: string
@@ -15,8 +15,14 @@ export interface ItineraryProps {
 }
 
 export default function ItineraryCard(itinerary: ItineraryProps) {
+    const router = useRouter()
+
+    const handleClick = () => {
+        router.push(`/plan/${itinerary.id}`)
+    }
+
     return (
-        <Card className="shadow-sm hover:shadow-md">
+        <Card className="shadow-sm hover:shadow-md hover:cursor-pointer" onClick={handleClick}>
             <CardHeader>
                 <CardTitle>{itinerary.name}</CardTitle>
                 <CardDescription>Card Description</CardDescription>

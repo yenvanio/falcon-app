@@ -6,21 +6,20 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger
-} from "@/app/components/ui/dialog";
-import {Button} from "@/app/components/ui/button";
-import {Input} from "@/app/components/ui/input";
+} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import React, {useState} from "react";
 import {createClient} from "@/lib/supabase/client";
 import {z} from "zod";
-import {handleZodValidation, ValidationError} from "@/app/components/login/form-validation";
-import {DatePickerWithRange} from "@/app/components/ui/date-range-picker";
+import {handleZodValidation, ValidationError} from "@/components/auth/login/form-validation";
+import {DatePickerWithRange} from "@/components/ui/date-range-picker";
 import {addDays} from "date-fns";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Form, FormField, FormItem, FormLabel, FormMessage} from "@/app/components/ui/form";
-import {Label} from "@/app/components/ui/label";
-import {Toaster} from "@/app/components/ui/toaster";
-import {toast} from "@/app/components/ui/use-toast";
+import {Form, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import {Toaster} from "@/components/ui/toaster";
+import {toast} from "@/components/ui/use-toast";
 
 export const CreateItinerary = (props: { nextUrl?: string }) => {
     const supabase = createClient()

@@ -1,11 +1,9 @@
-import AuthedNavbar from "@/app/components/navigation/authed-navbar";
-import {CreateItinerary} from "@/app/components/create-itinerary/dialog";
-import ItinerariesGridServer from "@/app/components/display-itineraries/grid-server";
+import {CreateItinerary} from "@/components/itinerary/create-itinerary-dialog";
+import ItinerariesGridServer from "@/components/itinerary/grid-server";
 
-export default function Dashboard() {
+export default function Home() {
     return (
         <>
-            <AuthedNavbar/>
             <main className="flex min-h-screen flex-col justify-between p-20">
                 <div className="relative">
                     <div className="absolute top-0 right-0">
