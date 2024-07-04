@@ -62,7 +62,7 @@ export default function Waitlist() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
-                            <Button type="submit">Sign Up</Button>
+                            <Button type="submit" onClick={handleSubmit}>Sign Up</Button>
                         </form>
                     </div>
                 </div>
