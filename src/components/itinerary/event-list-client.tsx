@@ -19,8 +19,6 @@ export default function EventListClient({ initialEvents, itinerary_id }: EventLi
         return date.toLocaleString('default', { month: 'long' }) + " " + date.getDate()
     }
 
-    console.log(itinerary_id)
-
     useEffect(() => {
         const channel = supabase
             .channel('table-db-changes')
@@ -33,8 +31,6 @@ export default function EventListClient({ initialEvents, itinerary_id }: EventLi
                     filter: `itinerary_id=eq.${itinerary_id}`
                 },
                 (payload) => {
-                    console.log("INSERT payload:", payload);
-
                     setEvents((prevEvents) => {
                         const updatedEvents = new Map(prevEvents);
                         const event = payload.new as EventProps
