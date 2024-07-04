@@ -22,6 +22,8 @@ export default function Waitlist() {
                 user_email: email
             });
 
+        setEmail('')
+
         if (error) {
             if (error?.code == "23505") {
                 toast({
