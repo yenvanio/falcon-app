@@ -6,6 +6,7 @@ const loggedOutRoutes = ["/"];
 const authToken = 'sb-hufmgntltpmeoisjbcba-auth-token'
 
 export async function middleware(request: NextRequest) {
+    const baseURL = request.headers.get('host') ?? '/';
     const nextResponse = await updateSession(request)
     const cookies = request.cookies.get(authToken)
     let token: string | undefined = undefined
@@ -15,12 +16,12 @@ export async function middleware(request: NextRequest) {
 
     // If no token present for auth protected routes, redirect to landing page
     if (!token && loggedInRoutes.some((path) => request.nextUrl.pathname.startsWith(path))) {
-        return NextResponse.redirect("http://localhost:3000/");
+        return NextResponse.redirect(baseURL);
     }
 
     // If token present for default route, redirect to home
     // if (token && loggedOutRoutes.some((path) => request.nextUrl.pathname.startsWith(path))) {
-    //     return NextResponse.redirect("http://localhost:3000/home");
+    //     return NextResponse.redirect(baseURL + "/home");
     // }
 
     return NextResponse.next();
