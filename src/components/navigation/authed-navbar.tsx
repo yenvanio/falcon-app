@@ -1,5 +1,5 @@
 import Link from "next/link"
-import AppIcon from "@/components/ui/app-icon";
+import AppIcon from "@/components/ui/icons/app-icon";
 import {ProfileIcon} from "@/components/auth/profile-icon/profile-icon";
 import {User} from "@supabase/auth-js";
 

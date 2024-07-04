@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from 'react';
-import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
@@ -47,26 +46,27 @@ export default function Waitlist() {
     };
 
     return (
-        <div className="grid grid-rows-2 space-y-2">
-            <div className="row-span-1">
-                <Separator />
-            </div>
-            <div className="row-span-1 flex items-center justify-center">
-                <div className="grid grid-rows-3 col-span-1">
-                    <h3 className="text-lg font-semibold">Sign up for the waitlist</h3>
-                    <p className="text-muted-foreground">Be the first to know when we launch.</p>
-                    <form className="flex gap-2" onSubmit={handleSubmit}>
-                        <Input
-                            type="email"
-                            placeholder="Enter your email"
-                            className="flex-1"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                        <Button type="submit">Sign Up</Button>
-                    </form>
+        <div className="w-full py-6 md:py-12 lg:py-24">
+            <section className="w-full py-12 md:py-24 lg:py-32 bg-muted" id="landing-page-waitlist">
+                <div className="container px-4 md:px-6">
+                    <div className="mx-auto max-w-2xl space-y-4 text-center">
+                        <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Join Our Waitlist</h2>
+                        <p className="text-muted-foreground md:text-xl/relaxed">
+                            Sign up to be the first to know when we launch our new travel planning platform.
+                        </p>
+                        <form className="flex gap-2">
+                            <Input
+                                type="email"
+                                placeholder="Enter your email"
+                                className="flex-1"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                            <Button type="submit">Sign Up</Button>
+                        </form>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     );
 }

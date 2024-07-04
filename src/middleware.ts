@@ -6,6 +6,7 @@ const loggedOutRoutes = ["/"];
 const authToken = 'sb-hufmgntltpmeoisjbcba-auth-token'
 
 export async function middleware(request: NextRequest) {
+<<<<<<< Updated upstream
     const nextResponse = await updateSession(request)
     const cookies = request.cookies.get(authToken)
     let token: string | undefined = undefined
@@ -24,6 +25,9 @@ export async function middleware(request: NextRequest) {
     // }
 
     return NextResponse.next();
+=======
+    return await updateSession(request);
+>>>>>>> Stashed changes
 }
 
 export const config = {
