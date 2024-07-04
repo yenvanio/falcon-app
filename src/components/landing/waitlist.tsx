@@ -42,7 +42,7 @@ export default function Waitlist() {
             title: "Woohoo!",
             description: "You're on the waitlist! You'll be the first to know when we launch",
         })
-        console.log(data);
+
     };
 
     return (
@@ -54,7 +54,7 @@ export default function Waitlist() {
                         <p className="text-muted-foreground md:text-xl/relaxed">
                             Sign up to be the first to know when we launch our new travel planning platform.
                         </p>
-                        <form className="flex gap-2">
+                        <form className="flex gap-2" onSubmit={handleSubmit}>
                             <Input
                                 type="email"
                                 placeholder="Enter your email"
@@ -62,7 +62,7 @@ export default function Waitlist() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
-                            <Button type="submit" onClick={handleSubmit}>Sign Up</Button>
+                            <Button type="submit">Sign Up</Button>
                         </form>
                     </div>
                 </div>
