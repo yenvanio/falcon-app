@@ -2,6 +2,7 @@
 node_modules/
 .firebase/
 .next/
+.firebase/
 .swc/
 .*.env
 .env.*

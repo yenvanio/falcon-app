@@ -13,15 +13,12 @@ import React, {useState} from "react";
 import {createClient} from "@/lib/supabase/client";
 import {z} from "zod";
 import {handleZodValidation, ValidationError} from "@/components/auth/login/form-validation";
-import {DatePickerWithRange} from "@/components/ui/date-range-picker";
-import {addDays, parseISO} from "date-fns";
+import {parseISO} from "date-fns";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import {Toaster} from "@/components/ui/toaster";
 import {toast} from "@/components/ui/use-toast";
 import {DatePicker} from "@/components/ui/date-picker";
-import {ItineraryProps} from "@/components/itinerary/card";
 
 type CreateEventDialogProps = {
     itinerary_id: number;
@@ -164,7 +161,6 @@ export const CreateEvent = (props: CreateEventDialogProps) => {
                     </Form>
                 </div>
             </DialogContent>
-            <Toaster/>
         </Dialog>
     )
 }

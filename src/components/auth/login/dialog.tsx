@@ -20,7 +20,6 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
 import {Input} from "@/components/ui/input";
 import {AuthError} from "@supabase/auth-js";
-import {Toaster} from "@/components/ui/toaster";
 import {toast} from "@/components/ui/use-toast";
 
 interface FormFieldType {
@@ -165,7 +164,6 @@ export const LoginDialog = (props: { nextUrl?: string }) => {
                     </div>
                 </DialogFooter>
             </DialogContent>
-            <Toaster />
         </Dialog>
     )
 }

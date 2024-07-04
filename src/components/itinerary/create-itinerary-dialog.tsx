@@ -18,7 +18,6 @@ import {addDays} from "date-fns";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import {Toaster} from "@/components/ui/toaster";
 import {toast} from "@/components/ui/use-toast";
 
 export const CreateItinerary = (props: { nextUrl?: string }) => {
@@ -149,7 +148,6 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
                     </Form>
                 </div>
             </DialogContent>
-            <Toaster />
         </Dialog>
     )
 }
