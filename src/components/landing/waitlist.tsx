@@ -42,7 +42,6 @@ export default function Waitlist() {
             title: "Woohoo!",
             description: "You're on the waitlist! You'll be the first to know when we launch",
         })
-
     };
 
     return (
