@@ -55,7 +55,7 @@ export default function Waitlist() {
                         <p className="text-muted-foreground md:text-xl/relaxed">
                             Sign up to be the first to know when we launch our new travel planning platform.
                         </p>
-                        <form className="flex gap-2" onSubmit={handleSubmit}>
+                        <form className="flex flex-col gap-2 sm:flex-row" onSubmit={handleSubmit}>
                             <Input
                                 type="email"
                                 placeholder="Enter your email"
@@ -63,7 +63,7 @@ export default function Waitlist() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
-                            <Button type="submit">Sign Up</Button>
+                            <Button type="submit" className="w-full sm:w-auto">Sign Up</Button>
                         </form>
                     </div>
                 </div>
