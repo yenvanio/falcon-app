@@ -7,6 +7,9 @@ import ItineraryHeader from "@/components/itinerary/itinerary-header";
 import {createClient} from "@/lib/supabase/server";
 import {CreateEvent} from "@/components/itinerary/create-event-dialog";
 import {SkeletonCard} from "@/components/ui/skeleton-card";
+import {TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {Tabs} from "@radix-ui/react-tabs";
+import TodoListServer from "@/components/todo/todo-list-server";
 
 export default async function ItineraryDetailPage({params, searchParams}: {
     params: { [key: string]: string };
@@ -24,8 +27,6 @@ export default async function ItineraryDetailPage({params, searchParams}: {
         if (error) {
             console.error(error)
             return
-        } else {
-            console.log(data)
         }
 
         return data
@@ -36,31 +37,35 @@ export default async function ItineraryDetailPage({params, searchParams}: {
     return (
         <main className="flex min-h-screen flex-col justify-between p-20">
             <div className="relative">
-                {itinerary ? <div className="grid grid-cols-6">
-                    <div className="col-span-5">
-                        <ItineraryHeader itinerary={itinerary}/>
-                        <Separator className="mt-10 w-3/4"/>
-                        <div className="grid grid-cols-6 mt-10">
-                            <div className="col-span-4">
-                                <EventListServer itineraryId={itinerary.id}/>
+                {
+                    itinerary ?
+                        <div className="grid grid-rows-[auto,1fr]">
+                            <div className="row-span-1 grid grid-cols-6">
+                                <div className="col-span-5">
+                                    <ItineraryHeader itinerary={itinerary}/>
+                                    <Separator className="mt-5 w-5/6"/>
+                                </div>
                             </div>
-                            <div className="col-span-2">
-                                <CreateEvent itinerary_id={itinerary.id} start_date={itinerary.start_date}
-                                             end_date={itinerary.end_date}/>
+                            <div className="row-span-1 grid grid-cols-6">
+                                <Tabs className="p-5 col-span-5" defaultValue="itinerary">
+                                    <TabsList className="grid w-5/6 grid-cols-2 bg-slate-50">
+                                        <TabsTrigger value="itinerary"
+                                                     className="text-slate-600 data-[state=active]:bg-slate-800 data-[state=active]:text-white">Itinerary</TabsTrigger>
+                                        <TabsTrigger value="todo"
+                                                     className="text-slate-600 data-[state=active]:bg-slate-800 data-[state=active]:text-white">Places
+                                            to Visit</TabsTrigger>
+                                    </TabsList>
+                                    <TabsContent value="itinerary">
+                                        <EventListServer itinerary={itinerary}/>
+                                    </TabsContent>
+                                    <TabsContent value="todo">
+                                        <TodoListServer/>
+                                    </TabsContent>
+                                </Tabs>
                             </div>
                         </div>
-                    </div>
-                    <div className="grid grid-rows-3 col-span-1 space-y-4">
-                        <div className="row-span-1 space-y-2">
-                            <Label className="text-m font-semibold col-span-1 place-content-center">Travellers</Label>
-                            <ItineraryUsersList itinerary_id={itinerary.id}/>
-                        </div>
-                        <div className="row-span-2 space-y-2">
-                            <Label className="text-m font-semibold col-span-1 place-content-center">Notes</Label>
-                            <Textarea placeholder={itinerary.notes}/>
-                        </div>
-                    </div>
-                </div> : <SkeletonCard/>
+                    :
+                    <SkeletonCard/>
                 }
             </div>
         </main>

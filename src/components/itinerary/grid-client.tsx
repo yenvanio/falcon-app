@@ -46,7 +46,7 @@ export default function ItinerariesGridClient({ initialItineraries, userId }: It
                     setItineraries((prevItineraries) => {
                         const updatedItineraries = new Map(prevItineraries);
                         const itinerary = payload.old;
-                        updatedItineraries.delete(itinerary.id);
+                        updatedItineraries.delete(itinerary.itinerary_id);
                         return updatedItineraries;
                     });
                 }

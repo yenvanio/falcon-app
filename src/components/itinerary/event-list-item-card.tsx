@@ -12,18 +12,22 @@ export interface EventProps {
     created_by: string
 }
 
-export default function EventListItem(event: EventProps) {
+export default function EventListItemCard(event: EventProps) {
     const date = parseISO(event.date)
     const formattedTime = date.toLocaleTimeString([], { hour: 'numeric', minute: 'numeric', hour12: true });
 
     return (
-        <Card className="shadow-sm hover:shadow-md mt-10 mr-10">
+        <Card className="shadow-sm mt-10 mr-10">
             <CardHeader>
                 <CardTitle>{event.name}</CardTitle>
                 <CardDescription>{event.location} @ {formattedTime}</CardDescription>
             </CardHeader>
             <CardContent>
-
+                {/*<img*/}
+                {/*    src="/landing-page.jpg"*/}
+                {/*    alt="Hero"*/}
+                {/*    className="mx-auto w-full aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last"*/}
+                {/*/>*/}
             </CardContent>
             <CardFooter>
                 <div className="grid-rows-1 items-center gap-4 text-sm">

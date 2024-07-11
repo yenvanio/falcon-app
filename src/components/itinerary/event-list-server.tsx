@@ -1,26 +1,35 @@
 import {createClient} from "@/lib/supabase/server";
 import EventListClient from "@/components/itinerary/event-list-client";
-import {EventProps} from "@/components/itinerary/event-list-item";
-import {parseISO} from "date-fns";
+import {EventProps} from "@/components/itinerary/event-list-item-card";
+import {eachDayOfInterval, parseISO} from "date-fns";
+import {ItineraryProps} from "@/components/itinerary/card";
+import {StripTimeFromDate} from "@/components/itinerary/helper";
 
 type EventListClientWrapperProps = {
-    itineraryId: number;
+    itinerary: ItineraryProps;
 }
 
-export default async function EventListServer({itineraryId}: EventListClientWrapperProps) {
+export default async function EventListServer({itinerary}: EventListClientWrapperProps) {
     const supabase = createClient()
-    let events:Map<string, Map<number, EventProps>> = new Map()
 
-    const getDateKey = (date: Date) => {
-        return date.toLocaleString('default', { month: 'long' }) + " " + date.getDate()
+    const initializeEventsMap = (startDate: string, endDate: string) => {
+        let events:Map<string, Map<number, EventProps>> = new Map()
+
+        const start = parseISO(startDate);
+        const end = parseISO(endDate);
+        const dateRange = eachDayOfInterval({ start, end });
+
+        dateRange.forEach(date => {
+            events.set(StripTimeFromDate(date.toISOString()), new Map<number, EventProps>());
+        });
+
+        return events
     }
 
-    async function getEvents() {
-        const events:Map<string, Map<number, EventProps>> = new Map()
-
+    async function populateEvents(events:Map<string, Map<number, EventProps>>) {
         let { data, error } = await supabase
             .rpc('GetEventsByItineraryId', {
-                query_id: itineraryId
+                query_id: itinerary.id
             })
         if (error) {
             console.log(error)
@@ -30,10 +39,9 @@ export default async function EventListServer({itineraryId}: EventListClientWrap
         if (data) {
             data.forEach((event: EventProps) => {
                 let emptyMap: Map<number, EventProps> = new Map()
-                const dateKey = getDateKey(parseISO(event.date))
 
                 // Check if events exist under this date
-                let eventMap = events.get(dateKey)
+                let eventMap = events.get(StripTimeFromDate(event.date))
                 if (!eventMap) {
                     eventMap = emptyMap
                 }
@@ -42,14 +50,15 @@ export default async function EventListServer({itineraryId}: EventListClientWrap
                 eventMap.set(event.id, event)
 
                 // Set the map of events for this date to this super-map
-                events.set(dateKey, eventMap)
+                events.set(StripTimeFromDate(event.date), eventMap)
             })
         }
 
         return events
     }
 
-    events = await getEvents()
+    let events = initializeEventsMap(itinerary.start_date, itinerary.end_date);
+    events = await populateEvents(events);
 
-    return <EventListClient initialEvents={events} itinerary_id={itineraryId} />
+    return <EventListClient initialEvents={events} itinerary={itinerary} />
 }

@@ -19,12 +19,18 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {toast} from "@/components/ui/use-toast";
+import {
+    GooglePlacesAutocomplete,
+    GooglePlacesAutocompleteResult,
+} from "@/components/maps/places-autocomplete";
 
 export const CreateItinerary = (props: { nextUrl?: string }) => {
     const supabase = createClient()
     const [open, setOpen] = useState(false);
     const formSchema = z.object({
         itinerary_name: z.string().min(1, {message: "Name cannot be empty"}),
+        itinerary_location: z.string().min(1, {message: "Location cannot be empty"}),
+        itinerary_location_id: z.string(),
         itinerary_dates: z.object({
             from: z.date(),
             to: z.date(),
@@ -41,7 +47,6 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
                 path: ["to"], // specify which field the error message is for
             }
         ),
-        itinerary_notes: z.string().optional()
     })
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -50,7 +55,6 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
                 from: new Date(),
                 to: addDays(new Date(), 7),
             },
-            itinerary_notes: "",
         },
     });
     const [errors, setErrors] = useState<ValidationError<typeof formSchema>>({})
@@ -66,14 +70,22 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
         })
     }
 
+    const handlePlaceSelect = (place: GooglePlacesAutocompleteResult) => {
+        form.setValue("itinerary_location", place.description); // Set the location name
+        form.setValue("itinerary_location_id", place.place_id); // Set the location ID
+    }
+
     async function createItinerary(values: z.infer<typeof formSchema>) {
         const user = await supabase.auth.getUser()
+
+        console.log(values)
 
         let {data, error} = await supabase
             .rpc('CreateItinerary', {
                 itinerary_end_date: values.itinerary_dates.to.toISOString(),
+                itinerary_location: values.itinerary_location,
+                itinerary_location_id: values.itinerary_location_id,
                 itinerary_name: values.itinerary_name,
-                itinerary_notes: values.itinerary_notes,
                 itinerary_start_date: values.itinerary_dates.from.toISOString(),
                 owner_uuid: user.data.user?.id,
             })
@@ -110,8 +122,20 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
                                     render={({field}) => (
                                         <FormItem>
                                             <FormLabel>Name</FormLabel>
-                                            <Input {...field} name='name' placeholder='Where are you going?' type='text'
+                                            <Input {...field} name='name' placeholder='Enter a name for your trip' type='text'
                                                    id='name'/>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}/>
+                            </div>
+                            <div className="grid grid-cols-1 items-center gap-4" key='location'>
+                                <FormField
+                                    control={form.control}
+                                    name="itinerary_location"
+                                    render={({field}) => (
+                                        <FormItem>
+                                            <FormLabel>Location</FormLabel>
+                                            <GooglePlacesAutocomplete field={field} autocompleteTypes={['(cities)']} onComplete={handlePlaceSelect}/>
                                             <FormMessage/>
                                         </FormItem>
                                     )}/>
@@ -124,19 +148,6 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
                                         <FormItem>
                                             <FormLabel>Dates</FormLabel>
                                             <DatePickerWithRange field={field}/>
-                                            <FormMessage/>
-                                        </FormItem>
-                                    )}/>
-                            </div>
-                            <div className="grid grid-cols-1 items-center gap-4" key='notes'>
-                                <FormField
-                                    control={form.control}
-                                    name="itinerary_notes"
-                                    render={({field}) => (
-                                        <FormItem>
-                                            <FormLabel>Notes</FormLabel>
-                                            <Input {...field} name='notes' placeholder='Additional Info...' type='text'
-                                                   id='notes'/>
                                             <FormMessage/>
                                         </FormItem>
                                     )}/>
