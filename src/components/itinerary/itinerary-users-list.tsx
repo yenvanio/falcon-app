@@ -7,6 +7,9 @@ import {Separator} from "@/components/ui/separator"
 import {ItineraryRole} from "@/components/itinerary/card";
 import {createClient} from "@/lib/supabase/client";
 import {useEffect, useState} from "react";
+import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
+import {UsersIcon} from "@/components/ui/icons/users-icon";
 
 interface UserProps {
     id: number;
@@ -22,6 +25,7 @@ type ItineraryUsersListProps = {
 export function ItineraryUsersList({itinerary_id}: ItineraryUsersListProps) {
     const supabase = createClient();
     const [users, setUsers] = useState<UserProps[]>([]);
+    const [open, setOpen] = useState(false);
 
     useEffect(() => {
         const getUsers = async () => {
@@ -43,17 +47,29 @@ export function ItineraryUsersList({itinerary_id}: ItineraryUsersListProps) {
     }, [itinerary_id, supabase]);
 
     return (
-        <ScrollArea className="h-72 w-70 rounded-md border">
-            <div className="p-4">
-                {users.map((u) => (
-                    <>
-                        <div key={u.email} className="text-sm">
-                            <p>{u.email}</p>
-                        </div>
-                        <Separator className="my-2"/>
-                    </>
-                ))}
-            </div>
-        </ScrollArea>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button className="bg-white text-slate-950 hover:text-white">
+                    <UsersIcon/>
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Travellers</DialogTitle>
+                </DialogHeader>
+                <ScrollArea className="h-72 w-70 rounded-md border">
+                    <div className="p-4">
+                        {users.map((u) => (
+                            <>
+                                <div key={u.email} className="text-sm">
+                                    <p>{u.email}</p>
+                                </div>
+                                <Separator className="my-2"/>
+                            </>
+                        ))}
+                    </div>
+                </ScrollArea>
+            </DialogContent>
+        </Dialog>
     )
 }

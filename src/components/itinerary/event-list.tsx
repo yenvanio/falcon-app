@@ -1,34 +1,23 @@
 "use client"
 
-import { Label } from "@/components/ui/label";
-import EventListItem, { EventProps } from "@/components/itinerary/event-list-item";
+import { EventProps } from "@/components/itinerary/event-list-item-card";
+import {ItineraryProps} from "@/components/itinerary/card";
+import {EventListItemCollapsible} from "@/components/itinerary/event-list-item-collapsible";
 
 interface EventListProps {
+    itinerary: ItineraryProps
     events: Map<string, Map<number, EventProps>>
 }
 
-export default function EventsList({ events }: EventListProps) {
+export default function EventsList({ itinerary, events }: EventListProps) {
     const dateArray = Array.from(events.entries()).sort(
         (a, b) => (a[0] > b[0] ? 1 : -1)
     )
 
     return (
-            <div className="grid grid-cols-1 gap-4 max-w-6xl w-full">
-                {dateArray.map(([date, eventsMap]) => (
-                    <div className="mt-10" key={date}>
-                        <Label className="text-2xl font-semibold">{date}</Label>
-                        {Array.from(eventsMap.entries()).map(([id, event]) => (
-                            <EventListItem
-                                key={event.id}
-                                id={event.id}
-                                name={event.name}
-                                location={event.location}
-                                date={event.date}
-                                notes={event.notes}
-                                created_by={event.created_by}
-                            />
-                        ))}
-                    </div>
+            <div className="w-5/6">
+                {dateArray.map(([date, eventsMap], index) => (
+                    <EventListItemCollapsible date={date} itinerary={itinerary} eventsMap={eventsMap} isExpanded={index == 0}/>
                 ))}
             </div>
     )

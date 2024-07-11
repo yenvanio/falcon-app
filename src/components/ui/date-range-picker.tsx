@@ -14,16 +14,12 @@ import {
 } from "@/components/ui/popover"
 import {ControllerRenderProps, FieldValues} from "react-hook-form";
 
-interface DateRange {
-    from: Date
-    to: Date
-}
-
 interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> {
     field: ControllerRenderProps<{
         itinerary_name: string;
+        itinerary_location: string;
+        itinerary_location_id: string;
         itinerary_dates: { from: Date; to: Date; };
-        itinerary_notes?: string | undefined;
     }, "itinerary_dates">
 }
 

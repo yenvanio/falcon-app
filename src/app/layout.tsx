@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navigation/navbar";
 import {Toaster} from "@/components/ui/toaster";
+import {MapProvider} from "@/lib/maps/map-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +21,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
       <Navbar/>
-      {children}
+      <MapProvider>
+          {children}
+      </MapProvider>
       <Toaster />
       </body>
     </html>

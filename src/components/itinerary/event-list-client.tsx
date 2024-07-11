@@ -2,22 +2,19 @@
 
 import { useEffect, useState } from 'react';
 import {createClient} from "@/lib/supabase/client";
-import {EventProps} from "@/components/itinerary/event-list-item";
+import {EventProps} from "@/components/itinerary/event-list-item-card";
 import EventsList from "@/components/itinerary/event-list";
-import {parseISO} from "date-fns";
+import {ItineraryProps} from "@/components/itinerary/card";
+import {StripTimeFromDate} from "@/components/itinerary/helper";
 
 interface EventListClientProps {
+    itinerary: ItineraryProps;
     initialEvents: Map<string, Map<number, EventProps>>;
-    itinerary_id: number;
 }
 
-export default function EventListClient({ initialEvents, itinerary_id }: EventListClientProps) {
+export default function EventListClient({ initialEvents, itinerary }: EventListClientProps) {
     const [events, setEvents] = useState(new Map(initialEvents));
     const supabase = createClient();
-
-    const getDateKey = (date: Date) => {
-        return date.toLocaleString('default', { month: 'long' }) + " " + date.getDate()
-    }
 
     useEffect(() => {
         const channel = supabase
@@ -28,24 +25,24 @@ export default function EventListClient({ initialEvents, itinerary_id }: EventLi
                     event: 'INSERT',
                     schema: 'public',
                     table: 'events',
-                    filter: `itinerary_id=eq.${itinerary_id}`
+                    filter: `itinerary_id=eq.${itinerary.id}`
                 },
                 (payload) => {
                     setEvents((prevEvents) => {
                         const updatedEvents = new Map(prevEvents);
                         const event = payload.new as EventProps
-                        const dateKey = getDateKey(parseISO(event.date))
+                        const eventDate = StripTimeFromDate(event.date)
 
                         let emptyMap: Map<number, EventProps> = new Map()
 
                         // Check if events exist under this date
-                        let eventMap = updatedEvents.get(dateKey)
+                        let eventMap = updatedEvents.get(eventDate)
                         if (!eventMap) {
                             eventMap = emptyMap
                         }
 
                         eventMap.set(event.id, event)
-                        updatedEvents.set(dateKey, eventMap)
+                        updatedEvents.set(eventDate, eventMap)
 
                         return updatedEvents;
                     });
@@ -57,17 +54,17 @@ export default function EventListClient({ initialEvents, itinerary_id }: EventLi
                     event: 'DELETE',
                     schema: 'public',
                     table: 'events',
-                    filter: `itinerary_id=eq.${itinerary_id}`
+                    filter: `itinerary_id=eq.${itinerary.id}`
                 },
                 (payload) => {
                     setEvents((prevEvents) => {
                         const updatedEvents = new Map(prevEvents);
                         const event = payload.old;
-                        const dateKey = getDateKey(parseISO(event.date))
+                        const eventDate = StripTimeFromDate(event.date)
 
-                        const eventMap = updatedEvents.get(dateKey)!
+                        const eventMap = updatedEvents.get(eventDate)!
                         eventMap.delete(event.id)
-                        updatedEvents.set(dateKey, eventMap)
+                        updatedEvents.set(eventDate, eventMap)
 
                         return updatedEvents;
                     });
@@ -78,7 +75,7 @@ export default function EventListClient({ initialEvents, itinerary_id }: EventLi
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [supabase, itinerary_id]);
+    }, [supabase, itinerary.id]);
 
-    return <EventsList events={events} />;
+    return <EventsList events={events} itinerary={itinerary} />;
 }

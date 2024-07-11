@@ -9,11 +9,7 @@ runConfig:
 env:
   - variable: NEXT_PUBLIC_SUPABASE_URL
     secret: projects/736227343437/secrets/NEXT_PUBLIC_SUPABASE_URL
-    availability:
-      - BUILD
-      - RUNTIME
   - variable: NEXT_PUBLIC_SUPABASE_ANON_KEY
     secret: projects/736227343437/secrets/NEXT_PUBLIC_SUPABASE_ANON_KEY
-    availability:
-      - BUILD
-      - RUNTIME
+  - variable: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+    secret: projects/736227343437/secrets/NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
