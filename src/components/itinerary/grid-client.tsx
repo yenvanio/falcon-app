@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import {createClient} from "@/lib/supabase/client";
 import ItinerariesGrid from "@/components/itinerary/grid";
 import {ItineraryProps} from "@/components/itinerary/card";
+import {parseISO} from "date-fns";
 
 interface ItinerariesGridClientProps {
     initialItineraries: Map<number, ItineraryProps>;
@@ -28,8 +29,17 @@ export default function ItinerariesGridClient({ initialItineraries, userId }: It
                 (payload) => {
                     setItineraries((prevItineraries) => {
                         const updatedItineraries = new Map(prevItineraries);
-                        const itinerary = payload.new as ItineraryProps
-                        updatedItineraries.set(itinerary.id, itinerary)
+                        const { id, name, start_date, end_date, notes, owner_uuid, role } = payload.new;
+                        const itinerary: ItineraryProps = {
+                            id,
+                            name,
+                            start_date: parseISO(start_date),
+                            end_date: parseISO(end_date),
+                            notes,
+                            owner_uuid,
+                            role
+                        };
+                        updatedItineraries.set(itinerary.id, itinerary);
                         return updatedItineraries;
                     });
                 }

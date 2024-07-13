@@ -49,7 +49,7 @@ export function ItineraryUsersList({itinerary_id}: ItineraryUsersListProps) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="bg-white text-slate-950 hover:text-white">
+                <Button className="bg-white text-slate-950 hover:bg-accent">
                     <UsersIcon/>
                 </Button>
             </DialogTrigger>

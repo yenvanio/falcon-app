@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import HourFormat from '@/components/ui/time-picker/hour-picker';
 import HourWheel from '@/components/ui/time-picker/hour-wheel';
 import MinuteWheel from '@/components/ui/time-picker/minute-wheel';
@@ -100,7 +100,7 @@ const TimePickerSelection: React.FC<TimePickerSelectionProps> = ({
             )}
             <div
                 className="react-ios-time-picker-container"
-                style={{ height: `${height * 5 + 40}px` }}
+                style={{height: `${height * 5 + 40}px`}}
             >
                 <div
                     className="react-ios-time-picker-selected-overlay"
