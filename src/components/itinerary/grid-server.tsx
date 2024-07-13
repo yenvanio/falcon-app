@@ -1,6 +1,7 @@
 import {createClient} from "@/lib/supabase/server";
 import {ItineraryProps} from "@/components/itinerary/card";
 import ItinerariesGridClient from "@/components/itinerary/grid-client";
+import {parseISO} from "date-fns";
 
 export default async function ItinerariesGridServer() {
     const supabase = createClient()
@@ -20,9 +21,17 @@ export default async function ItinerariesGridServer() {
         }
 
         if (data) {
-            data.forEach((record: ItineraryProps) => {
-                itineraries.set(record.id, record)
-            })
+            data.map(({ id, name, start_date, end_date, notes, owner_uuid, role }: any) => ({
+                id,
+                name,
+                start_date: parseISO(start_date),
+                end_date: parseISO(end_date),
+                notes,
+                owner_uuid,
+                role
+            })).forEach((itinerary: ItineraryProps) => {
+                    itineraries.set(itinerary.id, itinerary);
+            });
         }
 
         return itineraries

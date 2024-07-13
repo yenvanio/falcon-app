@@ -78,8 +78,6 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
     async function createItinerary(values: z.infer<typeof formSchema>) {
         const user = await supabase.auth.getUser()
 
-        console.log(values)
-
         let {data, error} = await supabase
             .rpc('CreateItinerary', {
                 itinerary_end_date: values.itinerary_dates.to.toISOString(),

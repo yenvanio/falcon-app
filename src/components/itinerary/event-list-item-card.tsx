@@ -1,5 +1,5 @@
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import FormattedDateRange from "@/components/date/formatted-date";
+import FormattedDateRange from "@/components/calendar/formatted-date";
 import {useRouter} from "next/navigation";
 import {parseISO} from "date-fns";
 
@@ -7,13 +7,14 @@ export interface EventProps {
     id: number
     name: string
     location: string
-    date: string
+    start_date: string
+    end_date: string
     notes: string
     created_by: string
 }
 
 export default function EventListItemCard(event: EventProps) {
-    const date = parseISO(event.date)
+    const date = parseISO(event.start_date)
     const formattedTime = date.toLocaleTimeString([], { hour: 'numeric', minute: 'numeric', hour12: true });
 
     return (

@@ -1,15 +1,12 @@
-import {Label} from "@/components/ui/label";
-import {ItineraryUsersList} from "@/components/itinerary/itinerary-users-list";
 import {Separator} from "@/components/ui/separator";
-import {Textarea} from "@/components/ui/textarea";
-import EventListServer from "@/components/itinerary/event-list-server";
 import ItineraryHeader from "@/components/itinerary/itinerary-header";
 import {createClient} from "@/lib/supabase/server";
-import {CreateEvent} from "@/components/itinerary/create-event-dialog";
 import {SkeletonCard} from "@/components/ui/skeleton-card";
-import {TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {Tabs} from "@radix-ui/react-tabs";
-import TodoListServer from "@/components/todo/todo-list-server";
+import FalconCalendar, {CalendarEvent} from "@/components/calendar/calendar";
+import React from "react";
+import {parseISO} from "date-fns";
+import {ItineraryProps} from "@/components/itinerary/card";
+import {EventProps} from "@/components/itinerary/event-list-item-card";
 
 export default async function ItineraryDetailPage({params, searchParams}: {
     params: { [key: string]: string };
@@ -18,7 +15,7 @@ export default async function ItineraryDetailPage({params, searchParams}: {
     const query_id = Number(params.id)
     const supabase = createClient();
 
-    async function getItinerary() {
+    async function getItinerary(): Promise<ItineraryProps | undefined> {
         let {data, error} = await supabase
             .rpc('GetItineraryById', {
                 query_id
@@ -29,10 +26,46 @@ export default async function ItineraryDetailPage({params, searchParams}: {
             return
         }
 
-        return data
+        if (data) {
+            return {
+                id: data.id,
+                name: data.name,
+                start_date: parseISO(data.start_date),
+                end_date: parseISO(data.end_date),
+                notes: data.notes,
+                owner_uuid: data.owner_uuid,
+                role: data.role
+            }
+        }
+    }
+
+    async function getEvents(): Promise<CalendarEvent[]> {
+        const events: CalendarEvent[] = []
+
+        let { data, error } = await supabase
+            .rpc('GetEventsByItineraryId', {
+                query_id
+            })
+        if (error) {
+            console.log(error)
+            return events
+        }
+
+        data.forEach((record: EventProps) => {
+            events.push({
+                title: record.name,
+                start: parseISO(record.start_date),
+                end: parseISO(record.end_date),
+                resource: record,
+                allDay: false,
+            })
+        })
+
+        return events
     }
 
     const itinerary = await getItinerary()
+    const events = await getEvents()
 
     return (
         <main className="flex min-h-screen flex-col justify-between p-20">
@@ -46,22 +79,10 @@ export default async function ItineraryDetailPage({params, searchParams}: {
                                     <Separator className="mt-5 w-5/6"/>
                                 </div>
                             </div>
-                            <div className="row-span-1 grid grid-cols-6">
-                                <Tabs className="p-5 col-span-5" defaultValue="itinerary">
-                                    <TabsList className="grid w-5/6 grid-cols-2 bg-slate-50">
-                                        <TabsTrigger value="itinerary"
-                                                     className="text-slate-600 data-[state=active]:bg-slate-800 data-[state=active]:text-white">Itinerary</TabsTrigger>
-                                        <TabsTrigger value="todo"
-                                                     className="text-slate-600 data-[state=active]:bg-slate-800 data-[state=active]:text-white">Places
-                                            to Visit</TabsTrigger>
-                                    </TabsList>
-                                    <TabsContent value="itinerary">
-                                        <EventListServer itinerary={itinerary}/>
-                                    </TabsContent>
-                                    <TabsContent value="todo">
-                                        <TodoListServer/>
-                                    </TabsContent>
-                                </Tabs>
+                            <div className="grid grid-cols-6">
+                                <div className="col-span-5 w-5/6 mt-5">
+                                    <FalconCalendar itinerary={itinerary} events={events}/>
+                                </div>
                             </div>
                         </div>
                     :

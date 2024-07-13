@@ -1,14 +1,9 @@
-import {parseISO, format, formatDate} from 'date-fns';
-
 interface FormattedDateProps {
-    start_date_string: string;
-    end_date_string: string;
+    start_date: Date;
+    end_date: Date;
 }
 
-export default function FormattedDateRange({start_date_string, end_date_string}: FormattedDateProps) {
-    const start_date = parseISO(start_date_string)
-    const end_date = parseISO(end_date_string)
-
+export function FormatDateRange(start_date: Date, end_date: Date) {
     let formatted_start_date = ""
     let formatted_end_date = ""
 
@@ -43,7 +38,10 @@ export default function FormattedDateRange({start_date_string, end_date_string}:
         }
     }
 
-    const formattedDateRange = formatted_start_date + " - " + formatted_end_date
+    return formatted_start_date + " - " + formatted_end_date
+}
 
+export default function FormattedDateRange({start_date, end_date}: FormattedDateProps) {
+    const formattedDateRange = FormatDateRange(start_date, end_date)
     return <time>{formattedDateRange}</time>;
 }
