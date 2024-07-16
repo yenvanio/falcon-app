@@ -25,8 +25,8 @@ export default function ItineraryHeader({itinerary}: ItineraryHeaderProps) {
                                         end_date={itinerary?.end_date}/>
                                 </Label>
                             </div>
-                            <div className="col-span-1 place-content-end">
-                                <ItineraryUsersList itinerary_id={itinerary?.id} />
+                            <div className="col-span-1 flex justify-end items-center space-x-2">
+                                <ItineraryUsersList itinerary_id={itinerary?.id}/>
                                 <Button className="bg-white text-slate-950 hover:bg-accent">
                                     <NotesIcon/>
                                 </Button>

@@ -1,13 +1,15 @@
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
+    DialogDescription, DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger
 } from "@/components/ui/dialog";
 import React from "react";
-import {CalendarObject} from "@/components/calendar/calendar";
+import {CalendarEvent, CalendarObject} from "@/components/calendar/calendar";
+import {EventProps} from "@/components/events/types";
+import {Event} from "next/dist/compiled/@edge-runtime/primitives";
 
 export const CalendarMonthEvent = (object: CalendarObject) => {
     const event = object.event
@@ -19,20 +21,42 @@ export const CalendarMonthEvent = (object: CalendarObject) => {
                     <div>{event.title}</div>
                 </div>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>{event.title}</DialogTitle>
-                    <DialogDescription>
-                        Event Details
-                    </DialogDescription>
-                </DialogHeader>
-            </DialogContent>
+            <EventDialogContent event={event}/>
         </Dialog>
     )
 }
 
 export const CalendarWeekEvent = (object: CalendarObject) => {
     const event = object.event
+
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <div className="bg-primary text-primary-foreground rounded-md hover:cursor-pointer p-0.5 text-xs h-[100%]">
+                    <div className="m-1">{event.title}</div>
+                </div>
+            </DialogTrigger>
+            <EventDialogContent event={event}/>
+        </Dialog>
+    )
+}
+
+export const CalendarDayEvent = (object: CalendarObject) => {
+    const event = object.event
+
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <div className="bg-primary text-primary-foreground rounded-md p-0.5 hover:cursor-pointer h-[100%]">
+                    <div className="m-1">{`${event.title} @ ${event.resource.location.name}`}</div>
+                </div>
+            </DialogTrigger>
+            <EventDialogContent event={event}/>
+        </Dialog>
+    )
+}
+
+const EventDialogContent = ({ event }: { event: CalendarEvent }) => {
     const startTime = event.start.toLocaleString([], {
         hour: '2-digit',
         minute: '2-digit'
@@ -43,42 +67,17 @@ export const CalendarWeekEvent = (object: CalendarObject) => {
     });
 
     return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <div className="bg-primary text-primary-foreground rounded-md hover:cursor-pointer p-0.5 h-max text-xs">
-                    <div>{`${startTime} - ${endTime}`}</div>
-                </div>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>{event.title}</DialogTitle>
-                    <DialogDescription>
-                        Event Details
-                    </DialogDescription>
-                </DialogHeader>
-            </DialogContent>
-        </Dialog>
-    )
-}
-
-export const CalendarAgendaEvent = (object: CalendarObject) => {
-    const event = object.event
-
-    return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <div className="rounded-md p-0.5 hover:cursor-pointer">
-                    <div>{`${event.title} @ ${event.resource?.location}`}</div>
-                </div>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>{event.title}</DialogTitle>
-                    <DialogDescription>
-                        Event Details
-                    </DialogDescription>
-                </DialogHeader>
-            </DialogContent>
-        </Dialog>
+        <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+                <DialogTitle>{event.title}</DialogTitle>
+            </DialogHeader>
+            <div className="grid-rows-2">
+                <p>{event.resource.location.name}</p>
+                <p className="text-sm text-muted-foreground">{startTime} - {endTime}</p>
+            </div>
+            <DialogDescription>
+                {event.resource.notes}
+            </DialogDescription>
+        </DialogContent>
     )
 }

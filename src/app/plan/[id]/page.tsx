@@ -5,8 +5,8 @@ import {SkeletonCard} from "@/components/ui/skeleton-card";
 import FalconCalendar, {CalendarEvent} from "@/components/calendar/calendar";
 import React from "react";
 import {parseISO} from "date-fns";
-import {ItineraryProps} from "@/components/itinerary/card";
-import {EventProps} from "@/components/itinerary/event-list-item-card";
+import {MapComponent} from "@/components/maps/map";
+import {ItineraryProps} from "@/components/itinerary/types";
 
 export default async function ItineraryDetailPage({params, searchParams}: {
     params: { [key: string]: string };
@@ -32,7 +32,11 @@ export default async function ItineraryDetailPage({params, searchParams}: {
                 name: data.name,
                 start_date: parseISO(data.start_date),
                 end_date: parseISO(data.end_date),
-                notes: data.notes,
+                location: {
+                    name: data.location,
+                    latitude: data.location_lat,
+                    longitude: data.location_lng,
+                },
                 owner_uuid: data.owner_uuid,
                 role: data.role
             }
@@ -42,7 +46,7 @@ export default async function ItineraryDetailPage({params, searchParams}: {
     async function getEvents(): Promise<CalendarEvent[]> {
         const events: CalendarEvent[] = []
 
-        let { data, error } = await supabase
+        let {data, error} = await supabase
             .rpc('GetEventsByItineraryId', {
                 query_id
             })
@@ -51,12 +55,24 @@ export default async function ItineraryDetailPage({params, searchParams}: {
             return events
         }
 
-        data.forEach((record: EventProps) => {
+        data.forEach((record: any) => {
             events.push({
                 title: record.name,
                 start: parseISO(record.start_date),
                 end: parseISO(record.end_date),
-                resource: record,
+                resource: {
+                    id: record.id,
+                    name: record.name,
+                    location: {
+                        name: record.location,
+                        latitude: record.latitude,
+                        longitude: record.longitude
+                    },
+                    start_date: record.start_date,
+                    end_date: record.end_date,
+                    notes: record.notes,
+                    created_by: record.created_by,
+                },
                 allDay: false,
             })
         })
@@ -68,27 +84,33 @@ export default async function ItineraryDetailPage({params, searchParams}: {
     const events = await getEvents()
 
     return (
-        <main className="flex min-h-screen flex-col justify-between p-20">
-            <div className="relative">
-                {
-                    itinerary ?
-                        <div className="grid grid-rows-[auto,1fr]">
-                            <div className="row-span-1 grid grid-cols-6">
-                                <div className="col-span-5">
-                                    <ItineraryHeader itinerary={itinerary}/>
-                                    <Separator className="mt-5 w-5/6"/>
+        <main className="flex h-screen">
+            {
+                itinerary ? (
+                    <>
+                        <div className="bg-background p-6 shadow-2xl w-[800px] overflow-y-auto z-10">
+                            <div className="grid grid-rows-[auto,1fr] h-full">
+                                <div className="row-span-1 grid grid-cols-6">
+                                    <div className="col-span-6">
+                                        <ItineraryHeader itinerary={itinerary}/>
+                                        <Separator className="mt-5"/>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="grid grid-cols-6">
-                                <div className="col-span-5 w-5/6 mt-5">
-                                    <FalconCalendar itinerary={itinerary} events={events}/>
+                                <div className="grid grid-cols-6 flex-1">
+                                    <div className="col-span-6 mt-5">
+                                        <FalconCalendar itinerary={itinerary} initialEvents={events}/>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    :
-                    <SkeletonCard/>
-                }
-            </div>
+                        <div className="flex-1">
+                            <div id="map" className="h-full w-full">
+                                <MapComponent itinerary={itinerary}/>
+                            </div>
+                        </div>
+                    </>
+                ) : (<SkeletonCard/>)
+            }
         </main>
-    );
+    )
 }
