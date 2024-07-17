@@ -19,31 +19,39 @@ import {Form, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui
 import {toast} from "@/components/ui/use-toast";
 import TimePicker from "@/components/ui/time-picker/time-picker";
 import "react-time-picker-typescript/dist/style.css";
+import {PlusIcon} from "@/components/ui/icons/plus-icon";
+import GooglePlacesAutocomplete, {GooglePlacesAutocompleteResult} from "@/components/maps/places-autocomplete";
 
 type CreateEventDialogProps = {
     itinerary_id: number
-    date: string
 }
 
 export const CreateEvent = (props: CreateEventDialogProps) => {
     const supabase = createClient()
-    const date = props.date
     const [open, setOpen] = useState(false);
 
     const formSchema = z.object({
         event_name: z.string().min(1, {message: "Name cannot be empty"}),
-        event_time: z.string(),
+        event_date: z.date(),
+        event_start_time: z.string(),
+        event_end_time: z.string(),
         event_location: z.string().min(1, {message: "Location cannot be empty"}),
+        event_location_lat: z.string(),
+        event_location_lng: z.string(),
         event_notes: z.string().optional()
     })
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-            event_notes: "",
-        },
+        defaultValues: {},
     });
     const [errors, setErrors] = useState<ValidationError<typeof formSchema>>({})
+
+    const handlePlaceSelect = (place: GooglePlacesAutocompleteResult) => {
+        form.setValue("event_location", place.description)
+        form.setValue("event_location_lat", place.longitude.toString());
+        form.setValue("event_location_lng", place.latitude.toString());
+    }
 
     const handleSubmit = async (values: z.infer<typeof formSchema>) => {
         handleZodValidation({
@@ -62,7 +70,7 @@ export const CreateEvent = (props: CreateEventDialogProps) => {
         let {data, error} = await supabase
             .rpc('CreateEvent', {
                 event_created_by_uuid: user.data.user?.id,
-                event_date: date,
+                // event_date: date,
                 event_itinerary_id: props.itinerary_id,
                 event_location: values.event_location,
                 event_name: values.event_name,
@@ -85,7 +93,10 @@ export const CreateEvent = (props: CreateEventDialogProps) => {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button
-                    className="h-10 rounded-md bg-slate-900 hover:bg-slate-800 hover:text-slate-100 text-slate-50 px-5">Add item</Button>
+                    variant="ghost" size="icon" key="create-event-button"
+                    className="h-10 rounded-md">
+                    <PlusIcon className="w-5 h-5"/>
+                </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -114,8 +125,7 @@ export const CreateEvent = (props: CreateEventDialogProps) => {
                                     render={({field}) => (
                                         <FormItem>
                                             <FormLabel>Location</FormLabel>
-                                            <Input {...field} name='event_location' placeholder='Where are you going?' type='text'
-                                                   id='event_location'/>
+                                            <GooglePlacesAutocomplete field={field} autocompleteTypes={['']} onComplete={handlePlaceSelect}/>
                                             <FormMessage/>
                                         </FormItem>
                                     )}/>
@@ -123,7 +133,7 @@ export const CreateEvent = (props: CreateEventDialogProps) => {
                             <div className="grid grid-cols-1 items-center gap-4" key='event_time'>
                                 <FormField
                                     control={form.control}
-                                    name="event_time"
+                                    name="event_start_time"
                                     render={({field}) => (
                                         <FormItem>
                                             <FormLabel>Time</FormLabel>

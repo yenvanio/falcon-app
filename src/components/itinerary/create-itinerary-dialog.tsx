@@ -30,7 +30,8 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
     const formSchema = z.object({
         itinerary_name: z.string().min(1, {message: "Name cannot be empty"}),
         itinerary_location: z.string().min(1, {message: "Location cannot be empty"}),
-        itinerary_location_id: z.string(),
+        itinerary_location_lat: z.string(),
+        itinerary_location_lng: z.string(),
         itinerary_dates: z.object({
             from: z.date(),
             to: z.date(),
@@ -71,8 +72,9 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
     }
 
     const handlePlaceSelect = (place: GooglePlacesAutocompleteResult) => {
-        form.setValue("itinerary_location", place.description); // Set the location name
-        form.setValue("itinerary_location_id", place.place_id); // Set the location ID
+        form.setValue("itinerary_location", place.description);
+        form.setValue("itinerary_location_lat", place.latitude.toString());
+        form.setValue("itinerary_location_lng", place.longitude.toString());
     }
 
     async function createItinerary(values: z.infer<typeof formSchema>) {
@@ -82,7 +84,8 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
             .rpc('CreateItinerary', {
                 itinerary_end_date: values.itinerary_dates.to.toISOString(),
                 itinerary_location: values.itinerary_location,
-                itinerary_location_id: values.itinerary_location_id,
+                itinerary_location_lat: values.itinerary_location_lat,
+                itinerary_location_lng: values.itinerary_location_lng,
                 itinerary_name: values.itinerary_name,
                 itinerary_start_date: values.itinerary_dates.from.toISOString(),
                 owner_uuid: user.data.user?.id,
@@ -133,7 +136,7 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
                                     render={({field}) => (
                                         <FormItem>
                                             <FormLabel>Location</FormLabel>
-                                            <GooglePlacesAutocomplete field={field} autocompleteTypes={['(cities)']} onComplete={handlePlaceSelect}/>
+                                            <GooglePlacesAutocomplete field={field} autocompleteTypes={['geocode']} onComplete={handlePlaceSelect}/>
                                             <FormMessage/>
                                         </FormItem>
                                     )}/>

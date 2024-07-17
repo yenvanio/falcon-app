@@ -37,8 +37,24 @@
         display: none;
       }
 
+      [aria-label = "Toggle fullscreen view"] {
+      display: none;
+    }
+
+      .gm-style-mtc {
+        display: none;
+      }
+
       .pac-container {
-        display: none !important;
+        position: fixed !important;
+        z-index: 10000 !important;
+
+        .pac-item {
+          ::before ::after {
+            cursor: pointer !important;
+            z-index: 1050 !important;
+          }
+        }
       }
 
       .rbc-calendar {

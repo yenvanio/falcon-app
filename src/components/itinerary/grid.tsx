@@ -1,7 +1,8 @@
 "use client"
 
-import ItineraryCard, {ItineraryProps} from "@/components/itinerary/card";
 import {Label} from "@/components/ui/label";
+import {ItineraryProps} from "@/components/itinerary/types";
+import ItineraryCard from "@/components/itinerary/card";
 
 interface ItinerariesGridProps {
     itineraries: Map<number, ItineraryProps>
@@ -20,7 +21,7 @@ export default function ItinerariesGrid({itineraries}: ItinerariesGridProps) {
                         name={value.name}
                         start_date={value.start_date}
                         end_date={value.end_date}
-                        notes={value.notes}
+                        location={value.location}
                         owner_uuid={value.owner_uuid}
                         role={value.role}/>
                 ))}
