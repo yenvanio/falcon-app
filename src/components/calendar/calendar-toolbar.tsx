@@ -10,6 +10,7 @@ import {CalendarDaysIcon} from "@/components/ui/icons/calendar-days-icon";
 import {PlusIcon} from "@/components/ui/icons/plus-icon";
 import {CreateEvent} from "@/components/events/create-event-dialog";
 import {CalendarEvent} from "@/components/calendar/calendar";
+import {DotIcon} from "@/components/ui/icons/dot-icon";
 
 type ViewNamesGroupProps = {
     messages: Messages,
@@ -19,7 +20,7 @@ type ViewNamesGroupProps = {
 }
 
 function ViewNamesGroup(props: ViewNamesGroupProps) {
-    const { views, view, messages, onView } = props
+    const {views, view, messages, onView} = props
     const viewNames: View[] = Array.isArray(views)
         ? views
         : (Object.keys(views).filter(key => views[key as keyof typeof views]) as View[]);
@@ -31,28 +32,29 @@ function ViewNamesGroup(props: ViewNamesGroupProps) {
 
             {viewNames.map((name: string) => (
                 name == Views.DAY ?
-                    <Button variant="ghost" size="icon" key={name} onClick={() => onView(name)} className={clsx({'bg-accent': view === name})}>
+                    <Button variant="ghost" size="icon" key={name} onClick={() => onView(name)}
+                            className={clsx({'bg-accent': view === name})}>
                         <ListIcon className="w-5 h-5"/>
                         <span className="sr-only">View List</span>
                     </Button> :
-                name == Views.WEEK ?
-                    <Button variant="ghost" size="icon" className={clsx({'bg-accent': view === name})}>
-                        <CalendarDaysIcon className="w-5 h-5" key={name} onClick={() => onView(name)}/>
-                        <span className="sr-only">View Calendar</span>
-                    </Button>  :
-                name == Views.MONTH ?
-                    <Button variant="ghost" size="icon" className={clsx({'bg-accent': view === name})}>
-                        <CalendarIcon className="w-5 h-5" key={name} onClick={() => onView(name)}/>
-                        <span className="sr-only">View Calendar</span>
-                    </Button> :
-                    <></>
+                    name == Views.WEEK ?
+                        <Button variant="ghost" size="icon" className={clsx({'bg-accent': view === name})}>
+                            <CalendarDaysIcon className="w-5 h-5" key={name} onClick={() => onView(name)}/>
+                            <span className="sr-only">View Calendar</span>
+                        </Button> :
+                        name == Views.MONTH ?
+                            <Button variant="ghost" size="icon" className={clsx({'bg-accent': view === name})}>
+                                <CalendarIcon className="w-5 h-5" key={name} onClick={() => onView(name)}/>
+                                <span className="sr-only">View Calendar</span>
+                            </Button> :
+                            <></>
             ))}
         </div>
     )
 }
 
 export default function CalendarToolbar(props: ToolbarProps) {
-    const { label, localizer: {messages}, onNavigate, onView, view, views} = props
+    const {label, localizer: {messages}, onNavigate, onView, view, views} = props
 
     return (
         <div className="flex flex-col h-full">
@@ -63,14 +65,19 @@ export default function CalendarToolbar(props: ToolbarProps) {
                         <ChevronLeftIcon className="w-5 h-5"/>
                         <span className="sr-only">Previous Month</span>
                     </Button>
-                    <div className="grid-rows-2">
-                        <div className="text-lg font-medium row-span-1">{label}</div>
-                    </div>
+                    <Button variant="ghost" size="icon" onClick={() => onNavigate(navigate.TODAY)}
+                            aria-label={messages.today}>
+                        <DotIcon className="w-10 h-10"/>
+                        <span className="sr-only">Today</span>
+                    </Button>
                     <Button variant="ghost" size="icon" onClick={() => onNavigate(navigate.NEXT)}
                             aria-label={messages.next}>
                         <ChevronRightIcon className="w-5 h-5"/>
                         <span className="sr-only">Next Month</span>
                     </Button>
+                </div>
+                <div className="flex-1 flex justify-center">
+                    <div className="text-lg font-medium">{label}</div>
                 </div>
                 <ViewNamesGroup
                     view={view}
@@ -78,7 +85,7 @@ export default function CalendarToolbar(props: ToolbarProps) {
                     messages={messages}
                     onView={onView}
                 />
-        </header>
-</div>
-)
+            </header>
+        </div>
+    )
 }
