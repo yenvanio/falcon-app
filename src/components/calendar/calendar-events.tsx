@@ -1,14 +1,15 @@
 import {
     Dialog,
     DialogContent,
-    DialogDescription, DialogFooter,
+    DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger
 } from "@/components/ui/dialog";
 import React from "react";
-import {CalendarEvent} from "@/components/calendar/calendar";
+import {EventProps as FalconEventProps} from "@/components/events/types";
 import {EventProps} from "react-big-calendar";
+import {parseISO} from "date-fns";
 
 export const CalendarMonthEvent = (props: EventProps) => {
     const event = props.event.resource
@@ -17,7 +18,7 @@ export const CalendarMonthEvent = (props: EventProps) => {
         <Dialog>
             <DialogTrigger asChild>
                 <div className="bg-primary text-primary-foreground rounded-md p-0.5 hover:cursor-pointer">
-                    <div>{event.title}</div>
+                    <div>{event.name}</div>
                 </div>
             </DialogTrigger>
             <EventDialogContent event={event}/>
@@ -32,7 +33,7 @@ export const CalendarWeekEvent = (props: EventProps) => {
         <Dialog>
             <DialogTrigger asChild>
                 <div className="bg-primary text-primary-foreground rounded-md hover:cursor-pointer p-0.5 text-xs h-[100%]">
-                    <div className="m-1">{event.title}</div>
+                    <div className="m-1">{event.name}</div>
                 </div>
             </DialogTrigger>
             <EventDialogContent event={event}/>
@@ -47,7 +48,7 @@ export const CalendarDayEvent = (props: EventProps) => {
         <Dialog>
             <DialogTrigger asChild>
                 <div className="bg-primary text-primary-foreground rounded-md p-0.5 hover:cursor-pointer h-[100%]">
-                    <div className="m-1">{`${event.title} @ ${event.resource.location.name}`}</div>
+                    <div className="m-1">{`${event.name} @ ${event.location.name}`}</div>
                 </div>
             </DialogTrigger>
             <EventDialogContent event={event}/>
@@ -55,12 +56,15 @@ export const CalendarDayEvent = (props: EventProps) => {
     )
 }
 
-const EventDialogContent = ({ event }: { event: CalendarEvent }) => {
-    const startTime = event.start.toLocaleString([], {
+const EventDialogContent = ({ event }: { event: FalconEventProps }) => {
+    const start = parseISO(event.start_date)
+    const startTime = start.toLocaleString([], {
         hour: '2-digit',
         minute: '2-digit'
     });
-    const endTime = event.end.toLocaleString([], {
+
+    const end = parseISO(event.end_date)
+    const endTime = end.toLocaleString([], {
         hour: '2-digit',
         minute: '2-digit'
     });
@@ -68,14 +72,14 @@ const EventDialogContent = ({ event }: { event: CalendarEvent }) => {
     return (
         <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-                <DialogTitle>{event.title}</DialogTitle>
+                <DialogTitle>{event.name}</DialogTitle>
             </DialogHeader>
             <div className="grid-rows-2">
-                <p>{event.resource.location.name}</p>
+                <p>{event.location.name}</p>
                 <p className="text-sm text-muted-foreground">{startTime} - {endTime}</p>
             </div>
             <DialogDescription>
-                {event.resource.notes}
+                {event.notes}
             </DialogDescription>
         </DialogContent>
     )

@@ -1,10 +1,4 @@
 import Link from "next/link"
-import {Sheet, SheetTrigger, SheetContent} from "@/components/ui/sheet"
-import MenuIcon from "@/components/ui/menu-icon";
-import {Button} from "@/components/ui/button";
-import AppIcon from "@/components/ui/icons/app-icon";
-import {LoginDialog} from "@/components/auth/login/dialog";
-import {PlaneIcon} from "@/components/ui/icons/plane-icon";
 
 export default async function UnauthedNavbar() {
     return (
