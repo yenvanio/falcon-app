@@ -1,7 +1,8 @@
 "use client"
 
-import ItineraryCard, {ItineraryProps} from "@/components/itinerary/card";
 import {Label} from "@/components/ui/label";
+import {ItineraryProps} from "@/components/itinerary/types";
+import ItineraryCard from "@/components/itinerary/card";
 
 interface ItinerariesGridProps {
     itineraries: Map<number, ItineraryProps>

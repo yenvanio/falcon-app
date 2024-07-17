@@ -4,12 +4,12 @@ import * as React from "react"
 
 import {ScrollArea} from "@/components/ui/scroll-area"
 import {Separator} from "@/components/ui/separator"
-import {ItineraryRole} from "@/components/itinerary/card";
 import {createClient} from "@/lib/supabase/client";
 import {useEffect, useState} from "react";
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {UsersIcon} from "@/components/ui/icons/users-icon";
+import {ItineraryRole} from "@/components/itinerary/types";
 
 interface UserProps {
     id: number;

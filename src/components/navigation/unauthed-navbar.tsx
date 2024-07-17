@@ -22,7 +22,7 @@ export default async function UnauthedNavbar() {
                 </Link>
             </nav>
             <div className="float-right">
-                <LoginDialog />
+                {/*<LoginDialog />*/}
             </div>
         </header>
     )

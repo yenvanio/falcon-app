@@ -7,12 +7,11 @@ import {
     DialogTrigger
 } from "@/components/ui/dialog";
 import React from "react";
-import {CalendarEvent, CalendarObject} from "@/components/calendar/calendar";
-import {EventProps} from "@/components/events/types";
-import {Event} from "next/dist/compiled/@edge-runtime/primitives";
+import {CalendarEvent} from "@/components/calendar/calendar";
+import {EventProps} from "react-big-calendar";
 
-export const CalendarMonthEvent = (object: CalendarObject) => {
-    const event = object.event
+export const CalendarMonthEvent = (props: EventProps) => {
+    const event = props.event.resource
 
     return (
         <Dialog>
@@ -26,8 +25,8 @@ export const CalendarMonthEvent = (object: CalendarObject) => {
     )
 }
 
-export const CalendarWeekEvent = (object: CalendarObject) => {
-    const event = object.event
+export const CalendarWeekEvent = (props: EventProps) => {
+    const event = props.event.resource
 
     return (
         <Dialog>
@@ -41,8 +40,8 @@ export const CalendarWeekEvent = (object: CalendarObject) => {
     )
 }
 
-export const CalendarDayEvent = (object: CalendarObject) => {
-    const event = object.event
+export const CalendarDayEvent = (props: EventProps) => {
+    const event = props.event.resource
 
     return (
         <Dialog>

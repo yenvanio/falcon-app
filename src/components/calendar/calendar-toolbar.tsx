@@ -1,6 +1,6 @@
-import React from 'react'
+import React, {ComponentType} from 'react'
 import clsx from 'clsx'
-import {Navigate as navigate, Views} from 'react-big-calendar'
+import {Messages, Navigate as navigate, ToolbarProps, View, Views, ViewsProps} from 'react-big-calendar'
 import {Button} from "@/components/ui/button";
 import {ChevronLeftIcon} from "@/components/ui/icons/chevron-left-icon";
 import {CalendarIcon} from "@/components/ui/icons/calendar-icon";
@@ -9,36 +9,26 @@ import {ListIcon} from "lucide-react";
 import {CalendarDaysIcon} from "@/components/ui/icons/calendar-days-icon";
 import {PlusIcon} from "@/components/ui/icons/plus-icon";
 import {CreateEvent} from "@/components/events/create-event-dialog";
-
-type CalendarToolBarProps = {
-    date: Date,
-    label: string,
-    localizer: {
-        messages: {
-            today: string
-            next: string
-            previous: string
-        }
-    },
-    onNavigate: (direction: string) => void,
-    onView: () => void,
-    view: string,
-    views: string[],
-}
+import {CalendarEvent} from "@/components/calendar/calendar";
 
 type ViewNamesGroupProps = {
-    messages: {
-        [key: string]: string;
-    };
-    onView: (name: string) => void,
-    view: string,
-    views: string[]
+    messages: Messages,
+    onView: (view: View) => void,
+    view: View,
+    views: ViewsProps
 }
 
-function ViewNamesGroup({views: viewNames, view, messages, onView}: ViewNamesGroupProps) {
+function ViewNamesGroup(props: ViewNamesGroupProps) {
+    const { views, view, messages, onView } = props
+    const viewNames: View[] = Array.isArray(views)
+        ? views
+        : (Object.keys(views).filter(key => views[key as keyof typeof views]) as View[]);
+
+
     return (
         <div className="flex items-center gap-4">
             <CreateEvent itinerary_id={5}/>
+
             {viewNames.map((name: string) => (
                 name == Views.DAY ?
                     <Button variant="ghost" size="icon" key={name} onClick={() => onView(name)} className={clsx({'bg-accent': view === name})}>
@@ -61,7 +51,9 @@ function ViewNamesGroup({views: viewNames, view, messages, onView}: ViewNamesGro
     )
 }
 
-export default function CalendarToolbar({label, localizer: {messages}, onNavigate, onView, view, views}: CalendarToolBarProps) {
+export default function CalendarToolbar(props: ToolbarProps) {
+    const { label, localizer: {messages}, onNavigate, onView, view, views} = props
+
     return (
         <div className="flex flex-col h-full">
             <header className="bg-background border-b flex items-center justify-between px-6 py-4">

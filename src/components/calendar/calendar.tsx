@@ -1,7 +1,7 @@
 "use client"
 
 import 'react-big-calendar/lib/sass/styles.scss'
-import {Calendar, dateFnsLocalizer, DateLocalizer, View, Views} from 'react-big-calendar'
+import {Calendar, dateFnsLocalizer, View, Views} from 'react-big-calendar'
 import React, {Fragment, HTMLAttributes, useCallback, useEffect, useMemo, useState} from "react"
 import {format, getDay, parse, parseISO, startOfWeek} from "date-fns"
 import { enUS } from "date-fns/locale/en-US"
@@ -14,17 +14,6 @@ import {
 import {createClient} from "@/lib/supabase/client";
 import {EventProps} from "@/components/events/types";
 import {ItineraryProps} from "@/components/itinerary/types";
-
-export interface CalendarObject {
-    title: string
-    event: CalendarEvent
-    slotStart: Date
-    slotEnd: Date
-    localizer: DateLocalizer
-    isAllDay: boolean
-    continuesAfter: boolean
-    continuesPrior: boolean
-}
 
 export interface CalendarEvent {
     allDay: boolean

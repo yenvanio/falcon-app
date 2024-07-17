@@ -1,10 +1,10 @@
 import {Label} from "@/components/ui/label";
 import FormattedDateRange from "@/components/calendar/formatted-date";
-import {ItineraryProps} from "@/components/itinerary/card";
 import {SkeletonCard} from "@/components/ui/skeleton-card";
 import {NotesIcon} from "@/components/ui/icons/notes-icon";
 import {Button} from "@/components/ui/button";
 import {ItineraryUsersList} from "@/components/itinerary/itinerary-users-list";
+import {ItineraryProps} from "@/components/itinerary/types";
 
 interface ItineraryHeaderProps {
     itinerary?: ItineraryProps | null

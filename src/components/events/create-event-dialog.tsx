@@ -49,8 +49,8 @@ export const CreateEvent = (props: CreateEventDialogProps) => {
 
     const handlePlaceSelect = (place: GooglePlacesAutocompleteResult) => {
         form.setValue("event_location", place.description)
-        form.setValue("event_location_lat", place.longitude);
-        form.setValue("event_location_lng", place.latitude);
+        form.setValue("event_location_lat", place.longitude.toString());
+        form.setValue("event_location_lng", place.latitude.toString());
     }
 
     const handleSubmit = async (values: z.infer<typeof formSchema>) => {
