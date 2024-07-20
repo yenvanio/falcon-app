@@ -45,7 +45,10 @@ export const LoginDialog = (props: { nextUrl?: string }) => {
     })
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: {},
+        defaultValues: {
+            email: "",
+            password: ""
+        },
     });
     const fields: FormFieldType[] = [
         {name: 'email', label: 'E-mail', type: 'email', placeholder: 'Email'},

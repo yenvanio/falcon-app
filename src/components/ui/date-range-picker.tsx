@@ -20,6 +20,8 @@ interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> 
         itinerary_location: string;
         itinerary_location_lat: string;
         itinerary_location_lng: string;
+        itinerary_location_country: string;
+        itinerary_location_continent: string;
         itinerary_dates: { from: Date; to: Date; };
     }, "itinerary_dates">
 }

@@ -1,4 +1,4 @@
-import React, {ComponentType} from 'react'
+import React from 'react'
 import clsx from 'clsx'
 import {Messages, Navigate as navigate, ToolbarProps, View, Views, ViewsProps} from 'react-big-calendar'
 import {Button} from "@/components/ui/button";
@@ -7,10 +7,9 @@ import {CalendarIcon} from "@/components/ui/icons/calendar-icon";
 import {ChevronRightIcon} from "@/components/ui/icons/chevron-right-icon";
 import {ListIcon} from "lucide-react";
 import {CalendarDaysIcon} from "@/components/ui/icons/calendar-days-icon";
-import {PlusIcon} from "@/components/ui/icons/plus-icon";
 import {CreateEvent} from "@/components/events/create-event-dialog";
-import {CalendarEvent} from "@/components/calendar/calendar";
 import {DotIcon} from "@/components/ui/icons/dot-icon";
+import {ItineraryProps} from "@/components/itinerary/types";
 
 type ViewNamesGroupProps = {
     messages: Messages,
@@ -28,7 +27,7 @@ function ViewNamesGroup(props: ViewNamesGroupProps) {
 
     return (
         <div className="flex items-center gap-4">
-            <CreateEvent itinerary_id={5}/>
+            {/*<CreateEvent itinerary_id={5}/>*/}
 
             {viewNames.map((name: string) => (
                 name == Views.DAY ?
@@ -38,13 +37,13 @@ function ViewNamesGroup(props: ViewNamesGroupProps) {
                         <span className="sr-only">View List</span>
                     </Button> :
                     name == Views.WEEK ?
-                        <Button variant="ghost" size="icon" className={clsx({'bg-accent': view === name})}>
-                            <CalendarDaysIcon className="w-5 h-5" key={name} onClick={() => onView(name)}/>
+                        <Button variant="ghost" size="icon" key={name} className={clsx({'bg-accent': view === name})}>
+                            <CalendarDaysIcon className="w-5 h-5" onClick={() => onView(name)}/>
                             <span className="sr-only">View Calendar</span>
                         </Button> :
                         name == Views.MONTH ?
-                            <Button variant="ghost" size="icon" className={clsx({'bg-accent': view === name})}>
-                                <CalendarIcon className="w-5 h-5" key={name} onClick={() => onView(name)}/>
+                            <Button variant="ghost" size="icon" key={name} className={clsx({'bg-accent': view === name})}>
+                                <CalendarIcon className="w-5 h-5" onClick={() => onView(name)}/>
                                 <span className="sr-only">View Calendar</span>
                             </Button> :
                             <></>
@@ -53,7 +52,8 @@ function ViewNamesGroup(props: ViewNamesGroupProps) {
     )
 }
 
-export default function CalendarToolbar(props: ToolbarProps) {
+export default function CalendarToolbar(props: ToolbarProps, itinerary: ItineraryProps) {
+    const {start_date} = itinerary
     const {label, localizer: {messages}, onNavigate, onView, view, views} = props
 
     return (
@@ -65,10 +65,10 @@ export default function CalendarToolbar(props: ToolbarProps) {
                         <ChevronLeftIcon className="w-5 h-5"/>
                         <span className="sr-only">Previous Month</span>
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => onNavigate(navigate.TODAY)}
-                            aria-label={messages.today}>
+                    <Button variant="ghost" size="icon" onClick={() => onNavigate(navigate.DATE, start_date)}
+                            aria-label={messages.date}>
                         <DotIcon className="w-10 h-10"/>
-                        <span className="sr-only">Today</span>
+                        <span className="sr-only">{start_date.toString()}</span>
                     </Button>
                     <Button variant="ghost" size="icon" onClick={() => onNavigate(navigate.NEXT)}
                             aria-label={messages.next}>

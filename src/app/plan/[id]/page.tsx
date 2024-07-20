@@ -34,8 +34,10 @@ export default async function ItineraryDetailPage({params, searchParams}: {
                 end_date: parseISO(data.end_date),
                 location: {
                     name: data.location,
-                    latitude: data.location_lat,
-                    longitude: data.location_lng,
+                    country: data.country,
+                    continent: data.continent,
+                    latitude: data.latitude,
+                    longitude: data.longitude
                 },
                 owner_uuid: data.owner_uuid,
                 role: data.role
