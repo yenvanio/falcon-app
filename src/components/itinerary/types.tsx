@@ -8,6 +8,8 @@ export interface ItineraryProps {
     owner_uuid: string
     location: {
         name: string
+        country: string
+        continent: string
         latitude: string
         longitude: string
     }

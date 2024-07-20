@@ -14,14 +14,15 @@ interface ProfileIconProps {
     user: User | null
 }
 
-export const ProfileIcon = async ({user}: ProfileIconProps) => {
+export const ProfileIcon = ({user}: ProfileIconProps) => {
     const supabase = createClient();
     const router = useRouter();
 
-    const handleLogout = async () => {
-        await supabase.auth.signOut();
-        router.replace("/")
-        router.refresh()
+    const handleLogout = () => {
+        supabase.auth.signOut().then(() => {
+            router.replace("/")
+            router.refresh()
+        });
     };
 
     return (

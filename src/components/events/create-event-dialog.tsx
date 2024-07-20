@@ -17,7 +17,6 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {toast} from "@/components/ui/use-toast";
-import TimePicker from "@/components/ui/time-picker/time-picker";
 import "react-time-picker-typescript/dist/style.css";
 import {PlusIcon} from "@/components/ui/icons/plus-icon";
 import GooglePlacesAutocomplete, {GooglePlacesAutocompleteResult} from "@/components/maps/places-autocomplete";
@@ -125,7 +124,7 @@ export const CreateEvent = (props: CreateEventDialogProps) => {
                                     render={({field}) => (
                                         <FormItem>
                                             <FormLabel>Location</FormLabel>
-                                            <GooglePlacesAutocomplete field={field} autocompleteTypes={['']} onComplete={handlePlaceSelect}/>
+                                            <GooglePlacesAutocomplete className="" autocompleteTypes={['']} onComplete={handlePlaceSelect}/>
                                             <FormMessage/>
                                         </FormItem>
                                     )}/>
@@ -137,7 +136,7 @@ export const CreateEvent = (props: CreateEventDialogProps) => {
                                     render={({field}) => (
                                         <FormItem>
                                             <FormLabel>Time</FormLabel>
-                                            <TimePicker {...field} />
+                                            {/*<TimePicker {...field} />*/}
                                             <FormMessage/>
                                         </FormItem>
                                     )}/>

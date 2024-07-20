@@ -58,7 +58,14 @@
       }
 
       .rbc-calendar {
-        min-height: 580px;
+        min-height: 500px;
+      }
+
+      .rbc-falcon-disabled {
+        /*bg-gray-300*/
+        background-color: rgb(209 213 219);
+        pointer-events: none;
+        opacity: 0.5;
       }
 
       .rbc-event {

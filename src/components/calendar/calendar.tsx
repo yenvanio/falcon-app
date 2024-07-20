@@ -1,10 +1,10 @@
 "use client"
 
 import 'react-big-calendar/lib/sass/styles.scss'
-import {Calendar, dateFnsLocalizer, View, Views} from 'react-big-calendar'
-import React, {Fragment, HTMLAttributes, useCallback, useEffect, useMemo, useState} from "react"
+import {Calendar, dateFnsLocalizer, ToolbarProps, View, Views} from 'react-big-calendar'
+import React, {Children, cloneElement, Fragment, HTMLAttributes, useCallback, useEffect, useMemo, useState} from "react"
 import {format, getDay, parse, parseISO, startOfWeek} from "date-fns"
-import { enUS } from "date-fns/locale/en-US"
+import {enUS} from "date-fns/locale/en-US"
 import CalendarToolbar from "@/components/calendar/calendar-toolbar";
 import {
     CalendarDayEvent,
@@ -14,6 +14,7 @@ import {
 import {createClient} from "@/lib/supabase/client";
 import {EventProps} from "@/components/events/types";
 import {ItineraryProps} from "@/components/itinerary/types";
+import {DayPropGetter} from "@/components/calendar/calendar-wrappers";
 
 export interface CalendarEvent {
     allDay: boolean
@@ -48,22 +49,10 @@ export default function FalconCalendar({itinerary, initialEvents}: FalconCalenda
     const supabase = createClient();
 
     const start_date_only = itinerary.start_date
-    start_date_only.setHours(0,0,0,0)
+    start_date_only.setHours(0, 0, 0, 0)
 
     const end_date_only = itinerary.end_date
-    end_date_only.setHours(23,59,59,999);
-
-    function dayPropGetter(date: Date): HTMLAttributes<HTMLDivElement> {
-        const disabled = !(date >= start_date_only && date <= end_date_only)
-
-        return {
-            style: {
-                backgroundColor: disabled ? 'bg-gray-300' : undefined,
-                pointerEvents: disabled ? 'none' : undefined,
-                opacity: disabled ? 0.5 : undefined,
-            }
-        }
-    }
+    end_date_only.setHours(23, 59, 59, 999);
 
     const onDrillDown = useCallback(
         (newDate: Date) => {
@@ -76,16 +65,22 @@ export default function FalconCalendar({itinerary, initialEvents}: FalconCalenda
     const {components, formats} = useMemo(
         () => ({
             components: {
-                toolbar: CalendarToolbar,
+                toolbar: (props: ToolbarProps) => {
+                    return CalendarToolbar(props, itinerary)
+                },
                 day: {
                     event: CalendarDayEvent,
                 },
                 week: {
-                  event: CalendarWeekEvent,
+                    event: CalendarWeekEvent,
                 },
                 month: {
                     event: CalendarMonthEvent,
-                }
+                },
+                // dateCellWrapper:  ,
+                // dayColumnWrapper: ,
+                // timeSlotWrapper:  ,
+                // timeGutterHeader: ,
             },
             formats: {}
         }),
@@ -162,12 +157,16 @@ export default function FalconCalendar({itinerary, initialEvents}: FalconCalenda
                     defaultView={view}
                     view={view}
                     date={date}
-                    onView={(view) => {setView(view)}}
+                    onView={(view) => {
+                        setView(view)
+                    }}
                     onNavigate={(date: Date) => {
                         setDate(new Date(date));
                     }}
                     onDrillDown={onDrillDown}
-                    dayPropGetter={dayPropGetter}
+                    dayPropGetter={(date: Date) => {
+                        return DayPropGetter(date, start_date_only, end_date_only)
+                    }}
                     min={start_date_only}
                     max={end_date_only}
                 />

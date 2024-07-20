@@ -53,19 +53,19 @@ export function ItineraryUsersList({itinerary_id}: ItineraryUsersListProps) {
                     <UsersIcon/>
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px]" aria-describedby={"List of users travelling"}>
                 <DialogHeader>
                     <DialogTitle>Travellers</DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="h-72 w-70 rounded-md border">
                     <div className="p-4">
                         {users.map((u) => (
-                            <>
-                                <div key={u.email} className="text-sm">
+                            <React.Fragment key={u.email}>
+                                <div className="text-sm">
                                     <p>{u.email}</p>
                                 </div>
                                 <Separator className="my-2"/>
-                            </>
+                            </React.Fragment>
                         ))}
                     </div>
                 </ScrollArea>

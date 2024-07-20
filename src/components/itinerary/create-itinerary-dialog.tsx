@@ -9,13 +9,13 @@ import {
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import React, {useState} from "react";
+import React, {FormEventHandler, useState} from "react";
 import {createClient} from "@/lib/supabase/client";
 import {z} from "zod";
 import {handleZodValidation, ValidationError} from "@/components/auth/login/form-validation";
 import {DatePickerWithRange} from "@/components/ui/date-range-picker";
 import {addDays} from "date-fns";
-import {useForm} from "react-hook-form";
+import {ControllerRenderProps, FieldValues, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {toast} from "@/components/ui/use-toast";
@@ -32,6 +32,8 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
         itinerary_location: z.string().min(1, {message: "Location cannot be empty"}),
         itinerary_location_lat: z.string(),
         itinerary_location_lng: z.string(),
+        itinerary_location_country: z.string(),
+        itinerary_location_continent: z.string(),
         itinerary_dates: z.object({
             from: z.date(),
             to: z.date(),
@@ -72,7 +74,9 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
     }
 
     const handlePlaceSelect = (place: GooglePlacesAutocompleteResult) => {
-        form.setValue("itinerary_location", place.description);
+        form.setValue("itinerary_location", place.name)
+        form.setValue("itinerary_location_country", place.country)
+        form.setValue("itinerary_location_continent", place.continent)
         form.setValue("itinerary_location_lat", place.latitude.toString());
         form.setValue("itinerary_location_lng", place.longitude.toString());
     }
@@ -84,6 +88,8 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
             .rpc('CreateItinerary', {
                 itinerary_end_date: values.itinerary_dates.to.toISOString(),
                 itinerary_location: values.itinerary_location,
+                itinerary_location_continent: values.itinerary_location_continent,
+                itinerary_location_country: values.itinerary_location_country,
                 itinerary_location_lat: values.itinerary_location_lat,
                 itinerary_location_lng: values.itinerary_location_lng,
                 itinerary_name: values.itinerary_name,
@@ -104,10 +110,14 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
     }
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={() => {
+            setOpen(!open)
+            form.reset()
+        }}>
             <DialogTrigger asChild>
                 <Button
-                    className="h-10 rounded-md bg-slate-900 hover:bg-slate-800 hover:text-slate-100 text-slate-50 px-5">Plan new trip</Button>
+                    className="h-10 rounded-md bg-slate-900 hover:bg-slate-800 hover:text-slate-100 text-slate-50 px-5">Plan
+                    new trip</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -115,7 +125,7 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <Form {...form}>
-                        <form className="space-y-8" onSubmit={form.handleSubmit(handleSubmit)}>
+                        <form className="space-y-8" onSubmit={ form.handleSubmit(handleSubmit)}>
                             <div className="grid grid-cols-1 items-center gap-4" key='name'>
                                 <FormField
                                     control={form.control}
@@ -123,7 +133,8 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
                                     render={({field}) => (
                                         <FormItem>
                                             <FormLabel>Name</FormLabel>
-                                            <Input {...field} name='name' placeholder='Enter a name for your trip' type='text'
+                                            <Input {...field} name='name' placeholder='Enter a name for your trip'
+                                                   type='text'
                                                    id='name'/>
                                             <FormMessage/>
                                         </FormItem>
@@ -136,7 +147,17 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
                                     render={({field}) => (
                                         <FormItem>
                                             <FormLabel>Location</FormLabel>
-                                            <GooglePlacesAutocomplete field={field} autocompleteTypes={['geocode']} onComplete={handlePlaceSelect}/>
+                                            <GooglePlacesAutocomplete bounds={null} {...field} className=""
+                                                                      autocompleteTypes={['geocode']}
+                                                                      autocompleteFields={[
+                                                                          'name',
+                                                                          'formatted_address',
+                                                                          'address_components',
+                                                                          'geometry',
+                                                                      ]}
+                                                                      country=''
+                                                                      continent=''
+                                                                      onComplete={handlePlaceSelect}/>
                                             <FormMessage/>
                                         </FormItem>
                                     )}/>
