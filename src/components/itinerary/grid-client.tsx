@@ -29,7 +29,7 @@ export default function ItinerariesGridClient({ initialItineraries, userId }: It
                 (payload) => {
                     setItineraries((prevItineraries) => {
                         const updatedItineraries = new Map(prevItineraries);
-                        const { id, name, start_date, end_date, location, location_lat, location_lng, owner_uuid, role } = payload.new;
+                        const { id, name, start_date, end_date, location, country, continent, latitude, longitude, owner_uuid, role } = payload.new;
                         const itinerary: ItineraryProps = {
                             id,
                             name,
@@ -37,8 +37,10 @@ export default function ItinerariesGridClient({ initialItineraries, userId }: It
                             end_date: parseISO(end_date),
                             location: {
                                 name: location,
-                                latitude: location_lat,
-                                longitude: location_lng,
+                                country: country,
+                                continent: continent,
+                                latitude: latitude,
+                                longitude: longitude,
                             },
                             owner_uuid,
                             role

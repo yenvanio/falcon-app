@@ -47,7 +47,7 @@ export const CreateEvent = (props: CreateEventDialogProps) => {
     const [errors, setErrors] = useState<ValidationError<typeof formSchema>>({})
 
     const handlePlaceSelect = (place: GooglePlacesAutocompleteResult) => {
-        form.setValue("event_location", place.description)
+        form.setValue("event_location", place.name)
         form.setValue("event_location_lat", place.longitude.toString());
         form.setValue("event_location_lng", place.latitude.toString());
     }
@@ -124,7 +124,7 @@ export const CreateEvent = (props: CreateEventDialogProps) => {
                                     render={({field}) => (
                                         <FormItem>
                                             <FormLabel>Location</FormLabel>
-                                            <GooglePlacesAutocomplete className="" autocompleteTypes={['']} onComplete={handlePlaceSelect}/>
+                                            {/*<GooglePlacesAutocomplete className="" autocompleteTypes={['']} onComplete={handlePlaceSelect} autocompleteFields={[]} bounds={} continent={}/>*/}
                                             <FormMessage/>
                                         </FormItem>
                                     )}/>
