@@ -5,9 +5,8 @@ import {SkeletonCard} from "@/components/ui/skeleton-card";
 import FalconCalendar, {CalendarEvent} from "@/components/calendar/calendar";
 import React from "react";
 import {parseISO} from "date-fns";
-import {MapComponent} from "@/components/maps/map";
+import MapSideDrawer from "@/components/maps/map-side-drawer";
 import {ItineraryProps} from "@/components/itinerary/types";
-import {Skeleton} from "@/components/ui/skeleton";
 import {FalconLocation} from "@/components/maps/types";
 
 export default async function ItineraryDetailPage({params, searchParams}: {
@@ -138,7 +137,7 @@ export default async function ItineraryDetailPage({params, searchParams}: {
                         </div>
                     </main>
                     <aside className="self-start sticky top-0 col-span-3">
-                        <MapComponent itinerary={itinerary} initialLocations={locations}/>
+                        <MapSideDrawer itinerary={itinerary} initialLocations={locations}/>
                     </aside>
                 </div>
             </>
