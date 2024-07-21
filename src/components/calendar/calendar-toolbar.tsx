@@ -58,16 +58,16 @@ export default function CalendarToolbar(props: ToolbarProps, itinerary: Itinerar
 
     return (
         <div className="flex flex-col h-full">
-            <header className="bg-background border-b flex items-center justify-between px-6 py-4">
+            <header className="bg-background border-b flex items-center justify-between px-4 py-4">
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" size="icon" onClick={() => onNavigate(navigate.PREVIOUS)}
                             aria-label={messages.previous}>
                         <ChevronLeftIcon className="w-5 h-5"/>
                         <span className="sr-only">Previous Month</span>
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => onNavigate(navigate.DATE, start_date)}
+                    <Button variant="outline" onClick={() => onNavigate(navigate.DATE, start_date)}
                             aria-label={messages.date}>
-                        <DotIcon className="w-10 h-10"/>
+                        Trip Start
                         <span className="sr-only">{start_date.toString()}</span>
                     </Button>
                     <Button variant="ghost" size="icon" onClick={() => onNavigate(navigate.NEXT)}

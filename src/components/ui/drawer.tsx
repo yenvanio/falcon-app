@@ -5,6 +5,8 @@ import {Drawer as DrawerPrimitive} from "vaul"
 
 import {cn} from "@/lib/utils"
 import {XIcon} from "lucide-react";
+import {ScrollArea} from "@/components/ui/scroll-area";
+import {Scada} from "next/dist/compiled/@next/font/dist/google";
 
 const Drawer = ({
                     shouldScaleBackground = true,
@@ -42,7 +44,7 @@ const DrawerContent = React.forwardRef<
     <DrawerPrimitive.Content
         ref={ref}
         className={cn(
-            "absolute right-0 bottom-0 z-50 flex h-1/2 w-full flex-col rounded-t-[10px] bg-primary text-secondary overflow-hidden",
+            "absolute right-0 bottom-0 z-50 flex h-2/5 w-full flex-col rounded-t-[10px] bg-primary text-secondary overflow-hidden",
             className
         )}
         {...props}
@@ -50,12 +52,15 @@ const DrawerContent = React.forwardRef<
         <div className="absolute top-4 right-4">
             {onClose && (
                 <DrawerClose>
-                    <XIcon className="text-gray-400 cursor-pointer" onClick={onClose}/>
+                    <XIcon className="text-gray-400 hover:cursor-pointer" onClick={onClose}/>
                 </DrawerClose>
             )}
         </div>
         <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted"/>
-        {children}
+        <div className="overflow-y-scroll">
+            {children}
+        </div>
+
     </DrawerPrimitive.Content>
 ))
 DrawerContent.displayName = "DrawerContent"
