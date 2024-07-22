@@ -34,9 +34,7 @@ export const CreateEvent = (props: CreateEventDialogProps) => {
         event_date: z.date(),
         event_start_time: z.string(),
         event_end_time: z.string(),
-        event_location: z.string().min(1, {message: "Location cannot be empty"}),
-        event_location_lat: z.string(),
-        event_location_lng: z.string(),
+        event_location: z.object({}),
         event_notes: z.string().optional()
     })
 
@@ -47,9 +45,7 @@ export const CreateEvent = (props: CreateEventDialogProps) => {
     const [errors, setErrors] = useState<ValidationError<typeof formSchema>>({})
 
     const handlePlaceSelect = (place: GooglePlacesAutocompleteResult) => {
-        form.setValue("event_location", place.name)
-        form.setValue("event_location_lat", place.longitude.toString());
-        form.setValue("event_location_lng", place.latitude.toString());
+        form.setValue("event_location", place)
     }
 
     const handleSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -66,24 +62,25 @@ export const CreateEvent = (props: CreateEventDialogProps) => {
     async function createEvent(values: z.infer<typeof formSchema>) {
         const user = await supabase.auth.getUser()
 
-        let {data, error} = await supabase
-            .rpc('CreateEvent', {
-                event_created_by_uuid: user.data.user?.id,
-                // event_date: date,
-                event_itinerary_id: props.itinerary_id,
-                event_location: values.event_location,
-                event_name: values.event_name,
-                event_notes: values.event_notes,
-            })
+        // let {data, error} = await supabase
+        //     .rpc('CreateEvent', {
+        //         event_created_by_uuid: user.data.user?.id,
+        //         event_start_date: values.event_start_date,
+        //         event_end_date: values.event_end_date,
+        //         event_itinerary_id: props.itinerary_id,
+        //         event_location: values.event_location,
+        //         event_name: values.event_name,
+        //         event_notes: values.event_notes,
+        //     })
 
-        if (error) {
-            console.log(error)
-            toast({
-                title: "Error Creating Event",
-                description: "Something went wrong, please try again later.",
-            })
-            return
-        }
+        // if (error) {
+        //     console.log(error)
+        //     toast({
+        //         title: "Error Creating Event",
+        //         description: "Something went wrong, please try again later.",
+        //     })
+        //     return
+        // }
 
         setOpen(false)
     }
@@ -92,8 +89,7 @@ export const CreateEvent = (props: CreateEventDialogProps) => {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button
-                    variant="ghost" size="icon" key="create-event-button"
-                    className="h-10 rounded-md">
+                    variant="ghost" size="icon" key="create-event-button">
                     <PlusIcon className="w-5 h-5"/>
                 </Button>
             </DialogTrigger>

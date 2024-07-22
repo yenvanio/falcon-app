@@ -5,8 +5,9 @@ import {SkeletonCard} from "@/components/ui/skeleton-card";
 import FalconCalendar, {CalendarEvent} from "@/components/calendar/calendar";
 import React from "react";
 import {parseISO} from "date-fns";
-import {MapComponent} from "@/components/maps/map";
+import MapSideDrawer from "@/components/maps/map-side-drawer";
 import {ItineraryProps} from "@/components/itinerary/types";
+import {FalconLocation} from "@/components/maps/types";
 
 export default async function ItineraryDetailPage({params, searchParams}: {
     params: { [key: string]: string };
@@ -82,37 +83,65 @@ export default async function ItineraryDetailPage({params, searchParams}: {
         return events
     }
 
+    async function getLocations(): Promise<Map<string, FalconLocation>> {
+        const locations:Map<string, FalconLocation> = new Map()
+
+        let {data, error} = await supabase
+            .rpc('GetLocationsByItineraryId', {
+                query_id
+            })
+
+            if (error) {
+                console.log(error)
+                return locations
+            }
+
+        if (data) {
+            data.map(({ id, name, address, latitude, longitude, phone, website }: any) => ({
+                id: id,
+                name: name,
+                address: address,
+                latitude: parseFloat(latitude),
+                longitude: parseFloat(longitude),
+                phone: phone,
+                website: website,
+            })).forEach((location: FalconLocation) => {
+                locations.set(location.id, location);
+            });
+        }
+
+        return locations
+    }
+
     const itinerary = await getItinerary()
     const events = await getEvents()
+    const locations = await getLocations()
 
     return (
-        <main className="flex h-screen">
-            {
-                itinerary ? (
-                    <>
-                        <div className="bg-background p-6 shadow-2xl w-[800px] overflow-y-auto z-10">
-                            <div className="grid grid-rows-[auto,1fr] h-full">
-                                <div className="row-span-1 grid grid-cols-6">
-                                    <div className="col-span-6">
-                                        <ItineraryHeader itinerary={itinerary}/>
-                                        <Separator className="mt-5"/>
-                                    </div>
+        itinerary ?
+            <>
+                <div className="grid grid-cols-7">
+                    <main className="col-span-4 bg-background p-6 shadow-2xl z-10">
+                        <div className="grid grid-rows-[auto,1fr] h-full">
+                            <div className="row-span-1 grid grid-cols-6">
+                                <div className="col-span-6">
+                                    <ItineraryHeader itinerary={itinerary}/>
+                                    <Separator className="mt-5"/>
                                 </div>
-                                <div className="grid grid-cols-6 flex-1">
-                                    <div className="col-span-6 mt-5">
-                                        <FalconCalendar itinerary={itinerary} initialEvents={events}/>
-                                    </div>
+                            </div>
+                            <div className="grid grid-cols-6 flex-1">
+                                <div className="col-span-6 mt-5">
+                                    <FalconCalendar itinerary={itinerary} initialEvents={events}/>
                                 </div>
                             </div>
                         </div>
-                        <div className="flex-1">
-                            <div id="map" className="h-full w-full">
-                                <MapComponent itinerary={itinerary}/>
-                            </div>
-                        </div>
-                    </>
-                ) : (<SkeletonCard/>)
-            }
-        </main>
+                    </main>
+                    <aside className="self-start sticky top-0 col-span-3">
+                        <MapSideDrawer itinerary={itinerary} initialLocations={locations}/>
+                    </aside>
+                </div>
+            </>
+            :
+            <SkeletonCard/>
     )
 }

@@ -81,6 +81,14 @@
         background-color: rgb(15, 23, 42);
       }
 
+      .gm-style-iw-chr {
+        display: none;
+      }
+
+      div.gm-style-iw.gm-style-iw-c {
+        padding: 0 !important;
+      }
+
     }
 
     .dark {
