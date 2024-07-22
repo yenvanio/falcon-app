@@ -1,17 +1,13 @@
 "use client"
 
-import {GoogleMap, MarkerF} from "@react-google-maps/api";
+import {GoogleMap} from "@react-google-maps/api";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {ItineraryProps} from "@/components/itinerary/types";
 import {FalconLocation} from "@/components/maps/types";
-import {Form, FormField, FormItem} from "@/components/ui/form";
-import GooglePlacesAutocomplete, {GooglePlacesAutocompleteResult} from "@/components/maps/places-autocomplete";
-import {z} from "zod";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
 import {GetBounds} from "@/components/maps/helper";
-import PlaceSuggestion from "@/components/maps/place-suggestion";
-import {createClient} from "@/lib/supabase/client";
+import FalconMarker from "@/components/maps/marker";
+import MapSearchForm from "@/components/maps/map-search-form";
+import {GooglePlacesAutocompleteResult} from "@/components/maps/places-autocomplete";
 
 type MapProps = {
     itinerary: ItineraryProps
@@ -33,9 +29,6 @@ const defaultMapOptions = {
 };
 
 export default function MapComponent({itinerary, locations}: MapProps) {
-    const supabase = createClient();
-
-    // Map
     const [map, setMap] = useState<google.maps.Map | null>(null);
     const mapRef = useRef<GoogleMap>(null)
     const onLoad = useCallback((map: any) => setMap(map), []);
@@ -45,69 +38,38 @@ export default function MapComponent({itinerary, locations}: MapProps) {
     }
     const bounds = GetBounds(defaultMapCenter, 100000)
 
-    // Map Search Form
-    const formSchema = z.object({
-        location: z.string(),
-        location_lat: z.string(),
-        location_lng: z.string(),
-    })
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-    })
+    const [searchLocationMarker, setSearchLocationMarker] = useState<FalconLocation | null>(null)
+    const handleSearchSubmit = (location: GooglePlacesAutocompleteResult | null) => {
+        if (!location) {
+            setSearchLocationMarker(null)
+            return
+        }
 
-    // Map Suggestion
-    const [isLocationDrawerOpen, setIsLocationDrawerOpen] = useState(false)
-    const [searchLocationMarker, setSearchLocationMarker] = useState<GooglePlacesAutocompleteResult | null>(null)
-
-    const handlePlaceSelect = (place: GooglePlacesAutocompleteResult) => {
-        setIsLocationDrawerOpen(true)
-        setSearchLocationMarker(place)
+        if (map && location) {
+            setSearchLocationMarker({
+                id: 'search-location-marker',
+                name: location.name,
+                address: location.address,
+                latitude: location.latitude,
+                longitude: location.longitude,
+                phone: location.phone,
+                website: location.website
+            })
+        }
     }
 
     useEffect(() => {
         if (map && searchLocationMarker) {
-            const position = {
+            map.panTo({
                 lat: searchLocationMarker.latitude!,
                 lng: searchLocationMarker.longitude!
-            }
-
-            // setSearchLocationMarkerPin()
-            // searchLocationMarkerPin?.setMap(map)
-
-            new google.maps.Marker({
-                map: map,
-                position: position,
-                title: searchLocationMarker.name
             })
-
-            map.panTo(position)
             map.setZoom(markerMapZoom)
+        } else if (map && !searchLocationMarker) {
+            map.panTo(defaultMapCenter)
+            map.setZoom(defaultMapZoom)
         }
     }, [searchLocationMarker]);
-
-    const addSearchMarkerToMap = () => {
-        if (map && searchLocationMarker) {
-            map.setZoom(defaultMapZoom)
-
-            let {data, error} = supabase
-                .rpc('CreateLocation', {
-                    location_address: searchLocationMarker.address,
-                    location_itinerary_id: itinerary.id,
-                    location_lat: searchLocationMarker.latitude.toString(),
-                    location_lng: searchLocationMarker.longitude.toString(),
-                    location_name: searchLocationMarker.name,
-                    location_phone: searchLocationMarker.phone ?? '',
-                    location_website: searchLocationMarker.website ?? ''
-                }).then(() => {
-                    if (error) console.error(error)
-                    else console.log(data)
-                })
-
-            setSearchLocationMarker(null)
-            // searchLocationMarkerPin?.setMap(null)
-            // setSearchLocationMarkerPin(null)
-        }
-    }
 
     return (
         <React.Fragment>
@@ -118,41 +80,14 @@ export default function MapComponent({itinerary, locations}: MapProps) {
                 zoom={defaultMapZoom}
                 options={defaultMapOptions}
                 onLoad={onLoad}>
+                {searchLocationMarker && (
+                    <FalconMarker id={searchLocationMarker.id} location={searchLocationMarker} isSearch={true}/>
+                )}
                 {Array.from(locations.entries()).map(([key, value]) => (
-                    <MarkerF key={key} title={value.name} position={{lat: value.latitude, lng: value.longitude}}/>
+                    <FalconMarker id={key} location={value} isSearch={false}/>
                 ))}
             </GoogleMap>
-            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-5/6">
-                <div className="relative">
-                    <Form {...form}>
-                        <FormField
-                            control={form.control}
-                            name="location"
-                            render={({field}) => (
-                                <FormItem>
-                                    <GooglePlacesAutocomplete {...field}
-                                                              className=""
-                                                              autocompleteTypes={[]}
-                                                              autocompleteFields={[
-                                                                  'name',
-                                                                  'formatted_address',
-                                                                  'address_components',
-                                                                  'formatted_phone_number',
-                                                                  'geometry',
-                                                                  'photos',
-                                                                  'rating',
-                                                                  'website'
-                                                              ]}
-                                                              bounds={bounds}
-                                                              country={itinerary.location.country}
-                                                              continent={itinerary.location.continent}
-                                                              onComplete={handlePlaceSelect}/>
-                                </FormItem>
-                            )}/>
-                    </Form>
-                </div>
-            </div>
-            <PlaceSuggestion searchLocationMarker={searchLocationMarker} isLocationDrawerOpen={isLocationDrawerOpen} onOpenChange={setIsLocationDrawerOpen} onSubmitSuggestion={addSearchMarkerToMap}/>
+            <MapSearchForm itinerary={itinerary} bounds={bounds} onSubmit={handleSearchSubmit}/>
         </React.Fragment>
     )
 }

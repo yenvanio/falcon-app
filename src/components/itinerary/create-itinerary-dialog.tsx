@@ -154,6 +154,7 @@ export const CreateItinerary = (props: { nextUrl?: string }) => {
                                                                           'formatted_address',
                                                                           'address_components',
                                                                           'geometry',
+                                                                          'place_id'
                                                                       ]}
                                                                       country=''
                                                                       continent=''

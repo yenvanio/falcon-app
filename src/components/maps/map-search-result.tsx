@@ -8,14 +8,14 @@ import PhotoGallery from "@/components/maps/photo-gallery";
 import React, {useEffect, useRef, useState} from "react";
 import {GooglePlacesAutocompleteResult} from "@/components/maps/places-autocomplete";
 
-interface PlaceSuggestionProps {
+interface MapSearchResultProps {
     isLocationDrawerOpen: boolean
     onOpenChange: (open: boolean) => void
     onSubmitSuggestion: () => void
-    searchLocationMarker: GooglePlacesAutocompleteResult | null
+    searchLocation: GooglePlacesAutocompleteResult | null
 }
 
-export default function PlaceSuggestion({searchLocationMarker, isLocationDrawerOpen, onOpenChange, onSubmitSuggestion}: PlaceSuggestionProps) {
+export default function MapSearchResult({searchLocation, isLocationDrawerOpen, onOpenChange, onSubmitSuggestion}: MapSearchResultProps) {
     const [searchLocationMarkerPin, setSearchLocationMarkerPin] = useState<google.maps.Marker | null>(null)
 
     const drawerContentRef = useRef<HTMLDivElement>(null);
@@ -26,11 +26,11 @@ export default function PlaceSuggestion({searchLocationMarker, isLocationDrawerO
                 isLocationDrawerOpen ? 'true' : 'false'
             );
         }
-    }, [isLocationDrawerOpen, searchLocationMarker]);
+    }, [isLocationDrawerOpen, searchLocation]);
 
     return (
         <Drawer open={isLocationDrawerOpen} onOpenChange={onOpenChange} modal={false}>
-            {searchLocationMarker &&
+            {searchLocation &&
                 <DrawerContent
                     ref={drawerContentRef}
                     className="focus:outline-none"
@@ -41,30 +41,30 @@ export default function PlaceSuggestion({searchLocationMarker, isLocationDrawerO
                         <div className="grid grid-cols-5 items-start">
                             <div className="col-span-3 mt-2 space-y-4">
                                 <DrawerTitle
-                                    className="text-wrap">{searchLocationMarker.name}</DrawerTitle>
+                                    className="text-wrap">{searchLocation.name}</DrawerTitle>
                                 <div className="flex items-center">
-                                    {searchLocationMarker.address && <>
+                                    {searchLocation.address && <>
                                         <MapPinIcon className="h-4 w-4"/>
                                         <DrawerDescription
-                                            className="ml-2 text-wrap">{searchLocationMarker.address}</DrawerDescription>
+                                            className="ml-2 text-wrap">{searchLocation.address}</DrawerDescription>
                                     </>}
                                 </div>
                                 <div className="flex items-center">
-                                    {searchLocationMarker.phone && <>
+                                    {searchLocation.phone && <>
                                         <PhoneIcon className="h-4 w-4"/>
                                         <DrawerDescription
-                                            className="ml-2">{searchLocationMarker.phone}</DrawerDescription>
+                                            className="ml-2">{searchLocation.phone}</DrawerDescription>
                                     </>}
                                 </div>
                                 <div className="flex items-center">
-                                    {searchLocationMarker.website && <>
+                                    {searchLocation.website && <>
                                         <LinkIcon className="h-4 w-4"/>
                                         <DrawerDescription
                                             className="ml-2">
                                             <a
-                                                href={searchLocationMarker.website}
+                                                href={searchLocation.website}
                                                 target="_blank">
-                                                {searchLocationMarker.website}
+                                                {searchLocation.website}
                                             </a>
                                         </DrawerDescription>
                                     </>}
@@ -72,9 +72,9 @@ export default function PlaceSuggestion({searchLocationMarker, isLocationDrawerO
                             </div>
                             <div className="grid col-span-2 gap-8 mt-2">
                                 <div className="flex justify-end items-end mr-10">
-                                    {searchLocationMarker.rating && <>
+                                    {searchLocation.rating && <>
                                         <StarIcon className="h-6 w-6 text-yellow-500 fill-yellow-500"/>
-                                        <span className="ml-1 text-sm">{searchLocationMarker.rating}</span></>}
+                                        <span className="ml-1 text-sm">{searchLocation.rating}</span></>}
                                 </div>
                                 <div className="flex justify-end items-end mr-10">
                                     <Button variant="outline" className="text-primary" onClick={onSubmitSuggestion}>
@@ -83,10 +83,9 @@ export default function PlaceSuggestion({searchLocationMarker, isLocationDrawerO
                                 </div>
                             </div>
                         </div>
-
                     </DrawerHeader>
                     <DrawerDescription>
-                        <PhotoGallery photos={searchLocationMarker.photos}/>
+                        <PhotoGallery photos={searchLocation.photos}/>
                     </DrawerDescription>
                 </DrawerContent>
             }

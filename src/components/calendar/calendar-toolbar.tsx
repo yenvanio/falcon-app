@@ -16,10 +16,11 @@ type ViewNamesGroupProps = {
     onView: (view: View) => void,
     view: View,
     views: ViewsProps
+    itinerary: ItineraryProps
 }
 
 function ViewNamesGroup(props: ViewNamesGroupProps) {
-    const {views, view, messages, onView} = props
+    const {views, view, messages, onView, itinerary} = props
     const viewNames: View[] = Array.isArray(views)
         ? views
         : (Object.keys(views).filter(key => views[key as keyof typeof views]) as View[]);
@@ -27,8 +28,7 @@ function ViewNamesGroup(props: ViewNamesGroupProps) {
 
     return (
         <div className="flex items-center gap-4">
-            {/*<CreateEvent itinerary_id={5}/>*/}
-
+            <CreateEvent itinerary_id={itinerary.id}/>
             {viewNames.map((name: string) => (
                 name == Views.DAY ?
                     <Button variant="ghost" size="icon" key={name} onClick={() => onView(name)}
@@ -84,6 +84,7 @@ export default function CalendarToolbar(props: ToolbarProps, itinerary: Itinerar
                     views={views}
                     messages={messages}
                     onView={onView}
+                    itinerary={itinerary}
                 />
             </header>
         </div>

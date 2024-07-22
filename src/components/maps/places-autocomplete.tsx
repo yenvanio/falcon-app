@@ -30,6 +30,7 @@ export interface GooglePlacesAutocompleteResult {
     photos: google.maps.places.PlacePhoto[]
     rating: number
     website: string
+    placeId: string
 }
 
 const getCountryCode = (addressComponents: google.maps.GeocoderAddressComponent[] | undefined): string | null => {
@@ -79,6 +80,7 @@ export const GooglePlacesAutocomplete = React.forwardRef<HTMLInputElement, Googl
 
         autoComplete.addListener('place_changed', () => {
             const place = autoComplete.getPlace()
+            console.log(place)
 
             if (place?.geometry && place.geometry.location) {
                 const country = getCountryCode(place.address_components);
@@ -94,7 +96,8 @@ export const GooglePlacesAutocomplete = React.forwardRef<HTMLInputElement, Googl
                     longitude: place.geometry.location?.lng(),
                     rating: place.rating!,
                     photos: place.photos ?? [],
-                    website: place.website!
+                    website: place.website!,
+                    placeId: place.place_id!
                 }
 
                 onComplete(result);

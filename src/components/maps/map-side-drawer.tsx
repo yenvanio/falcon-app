@@ -28,7 +28,7 @@ export default function MapSideDrawer({initialLocations, itinerary}: MapSideDraw
                 },
                 (payload) => {
                     setLocations((prevLocations) => {
-                        const updatedLocations = prevLocations;
+                        const updatedLocations = new Map(prevLocations);
                         const { id, name, address, latitude, longitude, phone, website } = payload.new;
                         const location: FalconLocation = {
                             id,
@@ -40,7 +40,6 @@ export default function MapSideDrawer({initialLocations, itinerary}: MapSideDraw
                             website
                         };
                         updatedLocations.set(location.id, location);
-
                         return updatedLocations;
                     });
                 }
