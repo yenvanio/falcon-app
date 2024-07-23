@@ -10,6 +10,7 @@ import {CalendarDaysIcon} from "@/components/ui/icons/calendar-days-icon";
 import {CreateEvent} from "@/components/events/create-event-dialog";
 import {DotIcon} from "@/components/ui/icons/dot-icon";
 import {ItineraryProps} from "@/components/itinerary/types";
+import {FalconLocation} from "@/components/maps/types";
 
 type ViewNamesGroupProps = {
     messages: Messages,
@@ -17,6 +18,7 @@ type ViewNamesGroupProps = {
     view: View,
     views: ViewsProps
     itinerary: ItineraryProps
+    locations: FalconLocation[]
 }
 
 function ViewNamesGroup(props: ViewNamesGroupProps) {
@@ -28,7 +30,7 @@ function ViewNamesGroup(props: ViewNamesGroupProps) {
 
     return (
         <div className="flex items-center gap-4">
-            <CreateEvent itinerary_id={itinerary.id}/>
+            <CreateEvent itinerary={itinerary} locations={props.locations}/>
             {viewNames.map((name: string) => (
                 name == Views.DAY ?
                     <Button variant="ghost" size="icon" key={name} onClick={() => onView(name)}
@@ -52,7 +54,7 @@ function ViewNamesGroup(props: ViewNamesGroupProps) {
     )
 }
 
-export default function CalendarToolbar(props: ToolbarProps, itinerary: ItineraryProps) {
+export default function CalendarToolbar(props: ToolbarProps, itinerary: ItineraryProps, locations: FalconLocation[]) {
     const {start_date} = itinerary
     const {label, localizer: {messages}, onNavigate, onView, view, views} = props
 
@@ -85,6 +87,7 @@ export default function CalendarToolbar(props: ToolbarProps, itinerary: Itinerar
                     messages={messages}
                     onView={onView}
                     itinerary={itinerary}
+                    locations={locations}
                 />
             </header>
         </div>

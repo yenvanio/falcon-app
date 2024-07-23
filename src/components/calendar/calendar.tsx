@@ -15,6 +15,7 @@ import {createClient} from "@/lib/supabase/client";
 import {EventProps} from "@/components/events/types";
 import {ItineraryProps} from "@/components/itinerary/types";
 import {DayPropGetter} from "@/components/calendar/calendar-wrappers";
+import {FalconLocation} from "@/components/maps/types";
 
 export interface CalendarEvent {
     allDay: boolean
@@ -39,13 +40,15 @@ const dFnsLocalizer = dateFnsLocalizer({
 type FalconCalendarProps = {
     itinerary: ItineraryProps
     initialEvents: CalendarEvent[]
+    initialLocations: Map<string, FalconLocation>
 }
 
-export default function FalconCalendar({itinerary, initialEvents}: FalconCalendarProps) {
+export default function FalconCalendar({itinerary, initialEvents, initialLocations}: FalconCalendarProps) {
     const [view, setView] = useState<View>(Views.DAY);
     const [date, setDate] = useState(itinerary.start_date);
 
     const [events, setEvents] = useState(initialEvents);
+    const [locations, setLocations] = useState(new Map(initialLocations))
     const supabase = createClient();
 
     const start_date_only = itinerary.start_date
@@ -66,7 +69,7 @@ export default function FalconCalendar({itinerary, initialEvents}: FalconCalenda
         () => ({
             components: {
                 toolbar: (props: ToolbarProps) => {
-                    return CalendarToolbar(props, itinerary)
+                    return CalendarToolbar(props, itinerary, Array.from(locations.values()))
                 },
                 day: {
                     event: CalendarDayEvent,
@@ -77,10 +80,6 @@ export default function FalconCalendar({itinerary, initialEvents}: FalconCalenda
                 month: {
                     event: CalendarMonthEvent,
                 },
-                // dateCellWrapper:  ,
-                // dayColumnWrapper: ,
-                // timeSlotWrapper:  ,
-                // timeGutterHeader: ,
             },
             formats: {}
         }),
@@ -99,15 +98,31 @@ export default function FalconCalendar({itinerary, initialEvents}: FalconCalenda
                     filter: `itinerary_id=eq.${itinerary.id}`
                 },
                 (payload) => {
+                    console.log(payload)
                     setEvents((prevEvents) => {
-                        const updatedEvents = prevEvents
-                        const event = payload.new as EventProps
+                        const updatedEvents = [...prevEvents]
+                        const { id, name, location, latitude, longitude, start_date, end_date, all_day, notes, created_by } = payload.new;
+                        const event: EventProps = {
+                            id,
+                            name,
+                            location: {
+                                name: location,
+                                latitude: latitude,
+                                longitude: longitude
+                            },
+                            start_date: parseISO(start_date),
+                            end_date: parseISO(end_date),
+                            notes,
+                            all_day,
+                            created_by
+                        };
+
                         updatedEvents.push({
                             title: event.name,
-                            start: parseISO(event.start_date),
-                            end: parseISO(event.end_date),
+                            start: event.start_date,
+                            end: event.end_date,
                             resource: event,
-                            allDay: false,
+                            allDay: event.all_day,
                         })
 
                         return updatedEvents;
@@ -124,7 +139,7 @@ export default function FalconCalendar({itinerary, initialEvents}: FalconCalenda
                 },
                 (payload) => {
                     setEvents((prevEvents) => {
-                        const updatedEvents = prevEvents
+                        const updatedEvents = [...prevEvents]
                         const event = payload.old as CalendarEvent
 
                         const index = updatedEvents.indexOf(event);
@@ -141,7 +156,60 @@ export default function FalconCalendar({itinerary, initialEvents}: FalconCalenda
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [supabase, itinerary.id]);
+    }, [supabase, itinerary]);
+
+    useEffect(() => {
+        const channel = supabase
+            .channel('table-db-changes')
+            .on(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'locations',
+                    filter: `itinerary_id=eq.${itinerary.id}`
+                },
+                (payload) => {
+                    setLocations((prevLocations) => {
+                        const updatedLocations = new Map(prevLocations);
+                        const { id, name, address, latitude, longitude, phone, website } = payload.new;
+                        const location: FalconLocation = {
+                            id,
+                            name,
+                            address,
+                            latitude: parseFloat(latitude),
+                            longitude: parseFloat(longitude),
+                            phone,
+                            website
+                        };
+                        updatedLocations.set(location.id, location);
+                        return updatedLocations;
+                    });
+                }
+            )
+            .on(
+                'postgres_changes',
+                {
+                    event: 'DELETE',
+                    schema: 'public',
+                    table: 'locations',
+                    filter: `itinerary_id=eq.${itinerary.id}`
+                },
+                (payload) => {
+                    setLocations((prevLocations) => {
+                        const updatedLocations = new Map(prevLocations);
+                        const location = payload.old;
+                        updatedLocations.delete(location.id);
+                        return updatedLocations;
+                    });
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [supabase, itinerary]);
 
     return (
         <Fragment>

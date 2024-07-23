@@ -9,7 +9,6 @@ import {
 import React from "react";
 import {EventProps as FalconEventProps} from "@/components/events/types";
 import {EventProps} from "react-big-calendar";
-import {parseISO} from "date-fns";
 
 export const CalendarMonthEvent = (props: EventProps) => {
     const event = props.event.resource
@@ -17,7 +16,7 @@ export const CalendarMonthEvent = (props: EventProps) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <div className="bg-primary text-primary-foreground rounded-md p-0.5 hover:cursor-pointer">
+                <div className="bg-primary text-primary-foreground rounded-md p-0.5 hover:cursor-pointer border-white border-2">
                     <div>{event.name}</div>
                 </div>
             </DialogTrigger>
@@ -32,7 +31,7 @@ export const CalendarWeekEvent = (props: EventProps) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <div className="bg-primary text-primary-foreground rounded-md hover:cursor-pointer p-0.5 text-xs h-[100%]">
+                <div className="bg-primary text-primary-foreground rounded-md hover:cursor-pointer p-0.5 text-xs h-[100%] border-white">
                     <div className="m-1">{event.name}</div>
                 </div>
             </DialogTrigger>
@@ -47,7 +46,7 @@ export const CalendarDayEvent = (props: EventProps) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <div className="bg-primary text-primary-foreground rounded-md p-0.5 hover:cursor-pointer h-[100%]">
+                <div className="bg-primary text-primary-foreground rounded-md p-0.5 hover:cursor-pointer h-[100%] border-white">
                     <div className="m-1">{`${event.name} @ ${event.location.name}`}</div>
                 </div>
             </DialogTrigger>
@@ -57,13 +56,13 @@ export const CalendarDayEvent = (props: EventProps) => {
 }
 
 const EventDialogContent = ({ event }: { event: FalconEventProps }) => {
-    const start = parseISO(event.start_date)
+    const start = event.start_date
     const startTime = start.toLocaleString([], {
         hour: '2-digit',
         minute: '2-digit'
     });
 
-    const end = parseISO(event.end_date)
+    const end = event.end_date
     const endTime = end.toLocaleString([], {
         hour: '2-digit',
         minute: '2-digit'
@@ -76,7 +75,7 @@ const EventDialogContent = ({ event }: { event: FalconEventProps }) => {
             </DialogHeader>
             <div className="grid-rows-2">
                 <p>{event.location.name}</p>
-                <p className="text-sm text-muted-foreground">{startTime} - {endTime}</p>
+                {!event.all_day && <p className="text-sm text-muted-foreground">{startTime} - {endTime}</p>}
             </div>
             <DialogDescription>
                 {event.notes}

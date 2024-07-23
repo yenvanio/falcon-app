@@ -8,6 +8,7 @@ import {parseISO} from "date-fns";
 import MapSideDrawer from "@/components/maps/map-side-drawer";
 import {ItineraryProps} from "@/components/itinerary/types";
 import {FalconLocation} from "@/components/maps/types";
+import {EventProps} from "@/components/events/types";
 
 export default async function ItineraryDetailPage({params, searchParams}: {
     params: { [key: string]: string };
@@ -59,24 +60,27 @@ export default async function ItineraryDetailPage({params, searchParams}: {
         }
 
         data.forEach((record: any) => {
-            events.push({
-                title: record.name,
-                start: parseISO(record.start_date),
-                end: parseISO(record.end_date),
-                resource: {
-                    id: record.id,
-                    name: record.name,
-                    location: {
-                        name: record.location,
-                        latitude: record.latitude,
-                        longitude: record.longitude
-                    },
-                    start_date: record.start_date,
-                    end_date: record.end_date,
-                    notes: record.notes,
-                    created_by: record.created_by,
+            const event: EventProps = {
+                id: record.id,
+                name: record.name,
+                location: {
+                    name: record.location,
+                    latitude: record.latitude,
+                    longitude: record.longitude
                 },
-                allDay: false,
+                start_date: parseISO(record.start_date),
+                end_date: parseISO(record.end_date),
+                all_day: record.all_day,
+                notes: record.notes,
+                created_by: record.created_by,
+            }
+
+            events.push({
+                title: event.name,
+                start: event.start_date,
+                end: event.end_date,
+                resource: event,
+                allDay: event.all_day,
             })
         })
 
@@ -114,8 +118,10 @@ export default async function ItineraryDetailPage({params, searchParams}: {
     }
 
     const itinerary = await getItinerary()
-    const events = await getEvents()
-    const locations = await getLocations()
+    const initialEvents = await getEvents()
+    const initialLocations = await getLocations()
+
+    console.log(initialEvents)
 
     return (
         itinerary ?
@@ -131,13 +137,13 @@ export default async function ItineraryDetailPage({params, searchParams}: {
                             </div>
                             <div className="grid grid-cols-6 flex-1">
                                 <div className="col-span-6 mt-5">
-                                    <FalconCalendar itinerary={itinerary} initialEvents={events}/>
+                                    <FalconCalendar itinerary={itinerary} initialEvents={initialEvents} initialLocations={initialLocations}/>
                                 </div>
                             </div>
                         </div>
                     </main>
                     <aside className="self-start sticky top-0 col-span-3">
-                        <MapSideDrawer itinerary={itinerary} initialLocations={locations}/>
+                        <MapSideDrawer itinerary={itinerary} initialLocations={initialLocations}/>
                     </aside>
                 </div>
             </>

@@ -78,7 +78,7 @@
       }
 
       .rbc-current-time-indicator {
-        background-color: rgb(15, 23, 42);
+        background-color: #0f172a;
       }
 
       .gm-style-iw-chr {
@@ -87,6 +87,20 @@
 
       div.gm-style-iw.gm-style-iw-c {
         padding: 0 !important;
+      }
+
+      .ant-picker-active-bar {
+        background-color: #0f172a;
+      }
+
+      .ant-picker-outlined {
+        border-color: rgb(226, 232, 240) !important;
+        box-shadow: none;
+
+        :focus {
+          border-color: #0f172a;
+          box-shadow: none;
+        }
       }
 
     }

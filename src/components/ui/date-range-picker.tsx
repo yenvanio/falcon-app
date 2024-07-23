@@ -26,7 +26,7 @@ interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> 
     }, "itinerary_dates">
 }
 
-export function DatePickerWithRange({className, field}: DatePickerWithRangeProps) {
+export function DatePickerWithRange({className, field}: any) {
     return (
         <div className={cn("grid gap-2", className)}>
             <Popover>
