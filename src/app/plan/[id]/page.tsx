@@ -9,6 +9,7 @@ import MapSideDrawer from "@/components/maps/map-side-drawer";
 import {ItineraryProps} from "@/components/itinerary/types";
 import {FalconLocation} from "@/components/maps/types";
 import {EventProps} from "@/components/events/types";
+import ItineraryInvite from "@/components/email/itinerary-invite";
 
 export default async function ItineraryDetailPage({params, searchParams}: {
     params: { [key: string]: string };
@@ -65,6 +66,7 @@ export default async function ItineraryDetailPage({params, searchParams}: {
                 name: record.name,
                 location: {
                     name: record.location,
+                    address: record.address,
                     latitude: record.latitude,
                     longitude: record.longitude
                 },
@@ -120,8 +122,6 @@ export default async function ItineraryDetailPage({params, searchParams}: {
     const itinerary = await getItinerary()
     const initialEvents = await getEvents()
     const initialLocations = await getLocations()
-
-    console.log(initialEvents)
 
     return (
         itinerary ?

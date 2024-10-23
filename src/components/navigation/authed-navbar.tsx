@@ -9,7 +9,7 @@ interface AuthedNavbarProps {
 
 export default async function AuthedNavbar({user}: AuthedNavbarProps) {
     return (
-        <header className="bg-slate-900 text-white px-4 py-3 flex items-center justify-between">
+        <header className="bg-slate-900 text-white px-4 py-3 flex items-center justify-between sticky top-0 z-[100]">
             <nav className="flex items-center gap-x-8">
                 <div></div>
                 <Link href="/home" className="flex items-center gap-2" prefetch={false}>
@@ -17,7 +17,8 @@ export default async function AuthedNavbar({user}: AuthedNavbarProps) {
                     <span className="sr-only">Home</span>
                 </Link>
             </nav>
-            <ProfileIcon  user={user}/>
+            <ProfileIcon user={user}/>
         </header>
+
     )
 }

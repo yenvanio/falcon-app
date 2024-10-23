@@ -8,14 +8,16 @@ import MapSearchResult from "@/components/maps/map-search-result";
 import {ItineraryProps} from "@/components/itinerary/types";
 import {createClient} from "@/lib/supabase/client";
 import {toast} from "@/components/ui/use-toast";
+import {Input} from "@/components/ui/input";
+import {MapSearchInput} from "@/components/maps/map-search-input";
 
 interface MapSearchFormProps {
     itinerary: ItineraryProps
-    bounds: google.maps.LatLngBounds | null
-    onSubmit: (location: GooglePlacesAutocompleteResult | null) => void
+    onSearch: () => void
+    onSelect: () => void
 }
 
-export default function MapSearchForm({itinerary, bounds, onSubmit}: MapSearchFormProps) {
+export default function MapSearchForm({itinerary, onSearch, onSelect}: MapSearchFormProps) {
     const supabase = createClient();
 
     const [isLocationDrawerOpen, setIsLocationDrawerOpen] = useState(false)
@@ -35,48 +37,50 @@ export default function MapSearchForm({itinerary, bounds, onSubmit}: MapSearchFo
         setSearchLocation(place)
     }
 
-    const addSearchMarkerToMap = () => {
-        if (searchLocation) {
-            supabase.rpc('CreateLocation', {
-                location_address: searchLocation.address,
-                location_itinerary_id: itinerary.id,
-                location_lat: searchLocation.latitude.toString(),
-                location_lng: searchLocation.longitude.toString(),
-                location_name: searchLocation.name,
-                location_phone: searchLocation.phone ?? '',
-                location_place_id: searchLocation.placeId,
-                location_website: searchLocation.website ?? '',
-            }).then((data: any, error: any) => {
-                if (error) {
-                    if (error?.code == "23505") {
-                        toast({
-                            title: "Oops",
-                            description: "You've already added this to your map",
-                        })
-                        return
-                    }
+    const addSearchMarkerToMap = () => {}
 
-                    toast({
-                        title: "Oh, no.",
-                        description: "Something went wrong, please try again later.",
-                    })
-                    return
-                }
-            })
-            setSearchLocation(null)
-        }
-    }
-
-    useEffect(() => {
-        if (!isLocationDrawerOpen) {
-            setSearchLocation(null)
-            form.reset()
-        }
-    }, [isLocationDrawerOpen]);
-
-    useEffect(() => {
-        onSubmit(searchLocation)
-    }, [searchLocation]);
+    // const addSearchMarkerToMap = () => {
+    //     if (searchLocation) {
+    //         supabase.rpc('CreateLocation', {
+    //             location_address: searchLocation.address,
+    //             location_itinerary_id: itinerary.id,
+    //             location_lat: searchLocation.latitude.toString(),
+    //             location_lng: searchLocation.longitude.toString(),
+    //             location_name: searchLocation.name,
+    //             location_phone: searchLocation.phone ?? '',
+    //             location_place_id: searchLocation.placeId,
+    //             location_website: searchLocation.website ?? '',
+    //         }).then((data: any, error: any) => {
+    //             if (error) {
+    //                 if (error?.code == "23505") {
+    //                     toast({
+    //                         title: "Oops",
+    //                         description: "You've already added this to your map",
+    //                     })
+    //                     return
+    //                 }
+    //
+    //                 toast({
+    //                     title: "Oh, no.",
+    //                     description: "Something went wrong, please try again later.",
+    //                 })
+    //                 return
+    //             }
+    //         })
+    //         setSearchLocation(null)
+    //     }
+    // }
+    //
+    // useEffect(() => {
+    //     if (!isLocationDrawerOpen) {
+    //         // setSearchLocation(null)
+    //         form.reset()
+    //     }
+    // }, [isLocationDrawerOpen]);
+    //
+    // useEffect(() => {
+    //     onSubmit(searchLocation)
+    // }, [searchLocation]);
 
     return (
         <>
@@ -88,24 +92,7 @@ export default function MapSearchForm({itinerary, bounds, onSubmit}: MapSearchFo
                             name="location"
                             render={({field}) => (
                                 <FormItem>
-                                    <GooglePlacesAutocomplete {...field}
-                                                              className=""
-                                                              autocompleteTypes={[]}
-                                                              autocompleteFields={[
-                                                                  'name',
-                                                                  'formatted_address',
-                                                                  'address_components',
-                                                                  'formatted_phone_number',
-                                                                  'geometry',
-                                                                  'photos',
-                                                                  'rating',
-                                                                  'website',
-                                                                  'place_id'
-                                                              ]}
-                                                              bounds={bounds}
-                                                              country={itinerary.location.country}
-                                                              continent={itinerary.location.continent}
-                                                              onComplete={handlePlaceSelect}/>
+                                    <MapSearchInput onSearch={onSearch} onSelect={onSelect}/>
                                 </FormItem>
                             )}/>
                     </Form>

@@ -101,12 +101,13 @@ export default function FalconCalendar({itinerary, initialEvents, initialLocatio
                     console.log(payload)
                     setEvents((prevEvents) => {
                         const updatedEvents = [...prevEvents]
-                        const { id, name, location, latitude, longitude, start_date, end_date, all_day, notes, created_by } = payload.new;
+                        const { id, name, location, address, latitude, longitude, start_date, end_date, all_day, notes, created_by } = payload.new;
                         const event: EventProps = {
                             id,
                             name,
                             location: {
                                 name: location,
+                                address: address,
                                 latitude: latitude,
                                 longitude: longitude
                             },

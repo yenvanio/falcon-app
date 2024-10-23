@@ -3,6 +3,7 @@ export interface EventProps {
     name: string
     location: {
         name: string
+        address: string
         latitude: string
         longitude: string
     }

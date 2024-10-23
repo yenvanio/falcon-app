@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/navigation/navbar";
 import {Toaster} from "@/components/ui/toaster";
 import {MapProvider} from "@/lib/maps/map-provider";
+import UnauthedNavbar from "@/components/navigation/unauthed-navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,10 +21,8 @@ export default function RootLayout({
   return (
     <html lang="en">
     <body className={inter.className}>
-    {/*<Navbar/>*/}
-    <MapProvider>
-        {children}
-    </MapProvider>
+    <UnauthedNavbar/>
+    {children}
     <Toaster/>
     </body>
     </html>

@@ -21,6 +21,10 @@ import {useForm} from "react-hook-form";
 import {Input} from "@/components/ui/input";
 import {AuthError} from "@supabase/auth-js";
 import {toast} from "@/components/ui/use-toast";
+import GoogleLoginButton from "@/components/auth/login/google-login";
+import GoogleAuthButton from "@/components/auth/login/google-login";
+import {Separator} from "@/components/ui/separator";
+import AppleAuthButton from "@/components/auth/login/apple-login";
 
 interface FormFieldType {
     name: "email" | "password"
@@ -119,19 +123,50 @@ export const LoginDialog = (props: { nextUrl?: string }) => {
         router.replace("/home")
     }
 
+    async function googleLogin() {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                queryParams: {
+                    access_type: 'offline',
+                    prompt: 'consent',
+                },
+                // redirectTo: AUTH_CALLBACK_URL,
+            },
+        })
+    }
+
+    async function appleLogin() {
+        await supabase.auth.signInWithOAuth({
+            provider: 'apple',
+            options: {
+                // redirectTo: AUTH_CALLBACK_URL,
+            },
+        })
+    }
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button
-                    className="h-10 rounded-md bg-slate-900 hover:bg-slate-100 hover:text-slate-950 text-slate-50 px-5">Login</Button>
+                    className="h-10 m-0 rounded-md bg-slate-900 hover:bg-slate-100 hover:text-slate-950 text-slate-50 px-5">Login</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>{isLogin ? "Login" : "Signup"}</DialogTitle>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
+                <div className="grid grid-rows-2 space-y-2 mt-8">
+                    <GoogleAuthButton isLogin={isLogin} onClick={googleLogin}/>
+                    <AppleAuthButton isLogin={isLogin} onClick={appleLogin}/>
+                </div>
+                <div className="flex items-center my-6">
+                    <div className="flex-1 h-px bg-muted"/>
+                    <div className="px-4 text-muted-foreground text-md">or</div>
+                    <div className="flex-1 h-px bg-muted"/>
+                </div>
+                <div className="grid gap-4">
                     <Form {...form}>
-                        <form className="space-y-8" onSubmit={form.handleSubmit(handleSubmit)}>
+                        <form className="space-y-4" onSubmit={form.handleSubmit(handleSubmit)}>
                             {fields.map(({name, placeholder, type, label}) => (
                                 <div className="grid grid-cols-1 items-center gap-4" key={name}>
                                     <FormField

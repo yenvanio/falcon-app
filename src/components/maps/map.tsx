@@ -9,17 +9,17 @@ import FalconMarker from "@/components/maps/marker";
 import MapSearchForm from "@/components/maps/map-search-form";
 import {GooglePlacesAutocompleteResult} from "@/components/maps/places-autocomplete";
 
-type MapProps = {
+export type MapProps = {
     itinerary: ItineraryProps
     locations: Map<string, FalconLocation>
 }
 
 export const defaultMapContainerStyle = {
     width: '100%',
-    height: '100vh',
+    height: '100vh'
 };
 
-const defaultMapZoom = 8
+const defaultMapZoom = 7
 const markerMapZoom = 12
 const defaultMapOptions = {
     zoomControl: true,
@@ -65,9 +65,6 @@ export default function MapComponent({itinerary, locations}: MapProps) {
                 lng: searchLocationMarker.longitude!
             })
             map.setZoom(markerMapZoom)
-        } else if (map && !searchLocationMarker) {
-            map.panTo(defaultMapCenter)
-            map.setZoom(defaultMapZoom)
         }
     }, [searchLocationMarker]);
 
@@ -87,7 +84,7 @@ export default function MapComponent({itinerary, locations}: MapProps) {
                     <FalconMarker id={key} location={value} isSearch={false}/>
                 ))}
             </GoogleMap>
-            <MapSearchForm itinerary={itinerary} bounds={bounds} onSubmit={handleSearchSubmit}/>
+            {/*<MapSearchForm itinerary={itinerary} bounds={bounds} onSubmit={handleSearchSubmit}/>*/}
         </React.Fragment>
     )
 }

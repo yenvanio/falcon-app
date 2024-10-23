@@ -1,5 +1,7 @@
 import {CreateItinerary} from "@/components/itinerary/create-itinerary-dialog";
 import ItinerariesGridServer from "@/components/itinerary/grid-server";
+import ItineraryInvite from "@/components/email/itinerary-invite";
+import React from "react";
 
 export default function Home() {
     return (

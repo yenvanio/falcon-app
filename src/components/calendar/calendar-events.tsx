@@ -73,9 +73,10 @@ const EventDialogContent = ({ event }: { event: FalconEventProps }) => {
             <DialogHeader>
                 <DialogTitle>{event.name}</DialogTitle>
             </DialogHeader>
-            <div className="grid-rows-2">
+            <div className="grid-rows-3">
                 <p>{event.location.name}</p>
-                {!event.all_day && <p className="text-sm text-muted-foreground">{startTime} - {endTime}</p>}
+                <p className="text-sm text-muted-foreground">{event.location.address}</p>
+                {!event.all_day && <p className="text-sm mt-2">{startTime} - {endTime}</p>}
             </div>
             <DialogDescription>
                 {event.notes}

@@ -2,14 +2,14 @@
 
 import {
     Dialog,
-    DialogContent,
+    DialogContent, DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import React, { useState} from "react";
+import React, {useState} from "react";
 import {createClient} from "@/lib/supabase/client";
 import {z} from "zod";
 import {handleZodValidation, ValidationError} from "@/components/auth/login/form-validation";
@@ -22,11 +22,12 @@ import {addDays} from "date-fns";
 import {LocationsAutocomplete} from "@/components/events/locations-autocomplete";
 import {FalconLocation} from "@/components/maps/types";
 import {ItineraryProps} from "@/components/itinerary/types";
-import { TimePicker } from 'antd';
+import {TimePicker} from 'antd';
 import {toast} from "@/components/ui/use-toast";
 import {Checkbox} from "@/components/ui/checkbox";
 import {CheckedState} from "@radix-ui/react-checkbox";
 import {Label} from "@/components/ui/label";
+import {ScrollArea} from "@/components/ui/scroll-area";
 
 type CreateEventDialogProps = {
     itinerary: ItineraryProps
@@ -64,7 +65,6 @@ export const CreateEvent = ({itinerary, locations}: CreateEventDialogProps) => {
         event_location: z.any(),
         event_notes: z.string().optional()
     })
-
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -139,106 +139,114 @@ export const CreateEvent = ({itinerary, locations}: CreateEventDialogProps) => {
     };
 
     return (
-        <Dialog open={open} onOpenChange={() => {
-            setOpen(!open)
-            form.reset()
-        }}>
-            <DialogTrigger asChild>
-                <Button
-                    variant="ghost" size="icon" key="create-event-button">
-                    <PlusIcon className="w-5 h-5"/>
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>New Event</DialogTitle>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                    <Form {...form}>
-                        <form className="space-y-8" onSubmit={form.handleSubmit(handleSubmit)}>
-                            <div className="grid grid-cols-1 items-center gap-4" key='event_name'>
-                                <FormField
-                                    control={form.control}
-                                    name="event_name"
-                                    render={({field}) => (
-                                        <FormItem>
-                                            <FormLabel>Name</FormLabel>
-                                            <Input {...field} name='event_name' placeholder='What are you doing?'
-                                                   type='text'
-                                                   id='event_name'/>
-                                            <FormMessage/>
-                                        </FormItem>
-                                    )}/>
-                            </div>
-                            <div className="grid grid-cols-1 items-center gap-4" key='event_location_name'>
-                                <FormField
-                                    control={form.control}
-                                    name="event_location_name"
-                                    render={({field}) => (
-                                        <FormItem>
-                                            <FormLabel>Location</FormLabel>
-                                            <LocationsAutocomplete field={field} locations={locations}
-                                                                   onComplete={handleLocationSelection}/>
-                                            <FormMessage/>
-                                        </FormItem>
-                                    )}/>
-                            </div>
-                            <div className="grid grid-cols-1 items-center gap-4" key='event_dates'>
-                                <FormField
-                                    control={form.control}
-                                    name="event_dates"
-                                    render={({field}) => (
-                                        <FormItem>
-                                            <FormLabel>Dates</FormLabel>
-                                            <DatePickerWithRange field={field}/>
-                                            <FormMessage/>
-                                        </FormItem>
-                                    )}/>
-                            </div>
-                            <div className="grid grid-cols-1 items-center gap-4" key='event_times'>
-                                <FormField
-                                    control={form.control}
-                                    name="event_times"
-                                    render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel>Time</FormLabel>
-                                        <TimePicker.RangePicker use12Hours format="h:mm A" disabled={allDayCheckbox}
-                                                                onChange={handleTimeSelection} className="w-full hover:border-primary focus:border-primary"/>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}/>
-                                <div className="flex items-center justify-end">
-                                    <Checkbox
-                                        checked={allDayCheckbox}
-                                        onCheckedChange={(state: CheckedState) => {
-                                            const isChecked = typeof state === "boolean" ? state : false
-                                            setAllDayCheckbox(isChecked)
-                                        }}
-                                    />
-                                    <Label className="p-2">All Day Event?</Label>
+        <Dialog open={open}
+                onOpenChange={() => {
+                    setOpen(!open)
+                    form.reset()
+                }}>
+            <Form {...form}>
+                <form className="space-y-8" onSubmit={form.handleSubmit(handleSubmit)}>
+                    <DialogTrigger asChild>
+                        <Button
+                            variant="ghost" size="icon" key="create-event-button">
+                            <PlusIcon className="w-5 h-5"/>
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[500px]">
+                        <DialogHeader>
+                            <DialogTitle>New Event</DialogTitle>
+                        </DialogHeader>
+                        <ScrollArea>
+                            <div className="grid gap-4 py-4 m-5 mt-0">
+
+                                <div className="grid grid-cols-1 items-center gap-4" key='event_name'>
+                                    <FormField
+                                        control={form.control}
+                                        name="event_name"
+                                        render={({field}) => (
+                                            <FormItem>
+                                                <FormLabel>Name</FormLabel>
+                                                <Input {...field} name='event_name' placeholder='What are you doing?'
+                                                       type='text'
+                                                       id='event_name'/>
+                                                <FormMessage/>
+                                            </FormItem>
+                                        )}/>
+                                </div>
+                                <div className="grid grid-cols-1 items-center gap-4" key='event_location_name'>
+                                    <FormField
+                                        control={form.control}
+                                        name="event_location_name"
+                                        render={({field}) => (
+                                            <FormItem>
+                                                <FormLabel>Location</FormLabel>
+                                                <LocationsAutocomplete field={field} locations={locations}
+                                                                       onComplete={handleLocationSelection}/>
+                                                <FormMessage/>
+                                            </FormItem>
+                                        )}/>
+                                </div>
+                                <div className="grid grid-cols-1 items-center gap-4" key='event_dates'>
+                                    <FormField
+                                        control={form.control}
+                                        name="event_dates"
+                                        render={({field}) => (
+                                            <FormItem>
+                                                <FormLabel>Dates</FormLabel>
+                                                <DatePickerWithRange field={field}/>
+                                                <FormMessage/>
+                                            </FormItem>
+                                        )}/>
+                                </div>
+                                <div className="grid grid-cols-1 items-center gap-4" key='event_times'>
+                                    <FormField
+                                        control={form.control}
+                                        name="event_times"
+                                        render={({field}) => (
+                                            <FormItem>
+                                                <FormLabel>Time</FormLabel>
+                                                <TimePicker.RangePicker use12Hours format="h:mm A"
+                                                                        disabled={allDayCheckbox}
+                                                                        onChange={handleTimeSelection}
+                                                                        className="w-full hover:border-primary focus:border-primary"/>
+                                                <FormMessage/>
+                                            </FormItem>
+                                        )}/>
+                                    <div className="flex items-center justify-end">
+                                        <Checkbox
+                                            checked={allDayCheckbox}
+                                            onCheckedChange={(state: CheckedState) => {
+                                                const isChecked = typeof state === "boolean" ? state : false
+                                                setAllDayCheckbox(isChecked)
+                                            }}
+                                        />
+                                        <Label className="p-2">All Day Event?</Label>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 items-center gap-4" key='event_notes'>
+                                    <FormField
+                                        control={form.control}
+                                        name="event_notes"
+                                        render={({field}) => (
+                                            <FormItem>
+                                                <FormLabel>Notes</FormLabel>
+                                                <Input {...field} name='event_notes' placeholder='Additional Info...'
+                                                       type='text'
+                                                       id='event_notes'/>
+                                                <FormMessage/>
+                                            </FormItem>
+                                        )}/>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-1 items-center gap-4" key='event_notes'>
-                                <FormField
-                                    control={form.control}
-                                    name="event_notes"
-                                    render={({field}) => (
-                                        <FormItem>
-                                            <FormLabel>Notes</FormLabel>
-                                            <Input {...field} name='event_notes' placeholder='Additional Info...'
-                                                   type='text'
-                                                   id='event_notes'/>
-                                            <FormMessage/>
-                                        </FormItem>
-                                    )}/>
-                            </div>
+                        </ScrollArea>
+                        <DialogFooter>
                             <div className="grid-rows-1 items-center gap-4">
                                 <Button className="float-right">Create</Button>
                             </div>
-                        </form>
-                    </Form>
-                </div>
-            </DialogContent>
+                        </DialogFooter>
+                    </DialogContent>
+                </form>
+            </Form>
         </Dialog>
     )
 }
