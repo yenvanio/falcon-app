@@ -98,7 +98,6 @@ export default function FalconCalendar({itinerary, initialEvents, initialLocatio
                     filter: `itinerary_id=eq.${itinerary.id}`
                 },
                 (payload) => {
-                    console.log(payload)
                     setEvents((prevEvents) => {
                         const updatedEvents = [...prevEvents]
                         const { id, name, location, address, latitude, longitude, start_date, end_date, all_day, notes, created_by } = payload.new;

@@ -9,9 +9,9 @@ import FalconMarker from "@/components/maps/marker";
 import MapSearchForm from "@/components/maps/map-search-form";
 import {GooglePlacesAutocompleteResult} from "@/components/maps/places-autocomplete";
 
-export type MapProps = {
-    itinerary: ItineraryProps
-    locations: Map<string, FalconLocation>
+export interface MapProps extends React.HTMLAttributes<HTMLDivElement> {
+    // itinerary: ItineraryProps
+    // locations: Map<string, FalconLocation>
 }
 
 export const defaultMapContainerStyle = {
@@ -28,13 +28,13 @@ const defaultMapOptions = {
     mapTypeId: 'roadmap',
 };
 
-export default function MapComponent({itinerary, locations}: MapProps) {
+export default function MapComponent() {
     const [map, setMap] = useState<google.maps.Map | null>(null);
     const mapRef = useRef<GoogleMap>(null)
     const onLoad = useCallback((map: any) => setMap(map), []);
     const defaultMapCenter = {
-        lat: parseFloat(itinerary.location.latitude),
-        lng: parseFloat(itinerary.location.longitude),
+        lat: 0.0,
+        lng: 0.0,
     }
     const bounds = GetBounds(defaultMapCenter, 100000)
 
@@ -70,20 +70,20 @@ export default function MapComponent({itinerary, locations}: MapProps) {
 
     return (
         <React.Fragment>
-            <GoogleMap
-                ref={mapRef}
-                mapContainerStyle={defaultMapContainerStyle}
-                center={defaultMapCenter}
-                zoom={defaultMapZoom}
-                options={defaultMapOptions}
-                onLoad={onLoad}>
-                {searchLocationMarker && (
-                    <FalconMarker id={searchLocationMarker.id} location={searchLocationMarker} isSearch={true}/>
-                )}
-                {Array.from(locations.entries()).map(([key, value]) => (
-                    <FalconMarker id={key} location={value} isSearch={false}/>
-                ))}
-            </GoogleMap>
+            {/*<GoogleMap*/}
+            {/*    ref={mapRef}*/}
+            {/*    mapContainerStyle={defaultMapContainerStyle}*/}
+            {/*    center={defaultMapCenter}*/}
+            {/*    zoom={defaultMapZoom}*/}
+            {/*    options={defaultMapOptions}*/}
+            {/*    onLoad={onLoad}>*/}
+            {/*    {searchLocationMarker && (*/}
+            {/*        <FalconMarker id={searchLocationMarker.id} location={searchLocationMarker} isSearch={true}/>*/}
+            {/*    )}*/}
+            {/*    {Array.from(locations.entries()).map(([key, value]) => (*/}
+            {/*        <FalconMarker id={key} location={value} isSearch={false}/>*/}
+            {/*    ))}*/}
+            {/*</GoogleMap>*/}
             {/*<MapSearchForm itinerary={itinerary} bounds={bounds} onSubmit={handleSearchSubmit}/>*/}
         </React.Fragment>
     )

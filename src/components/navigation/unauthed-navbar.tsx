@@ -1,12 +1,21 @@
 import Link from "next/link"
-import {LoginDialog} from "@/components/auth/login/dialog";
+import {SearchIcon} from "@/components/ui/icons/search-icon";
+import {MapIcon} from "@/components/ui/icons/map-icon";
+import {Dispatch, SetStateAction, useState} from "react";
+import HamburgerMenuIcon from "@/components/ui/hamburger-menu-icon";
 
-export default async function UnauthedNavbar() {
+interface UnauthedNavbarProps {
+    isSearch: boolean
+    isResultsExpanded: boolean
+    toggleSearch: Dispatch<SetStateAction<boolean>>
+    toggleResults: Dispatch<SetStateAction<boolean>>
+}
+
+export default function UnauthedNavbar({isSearch, toggleSearch, isResultsExpanded, toggleResults}: UnauthedNavbarProps) {
     return (
         <header className="bg-slate-900 text-white px-4 py-4 flex items-center justify-between">
             <nav className="flex items-center gap-4">
                 <Link href="#" className="flex items-center justify-center" prefetch={false}>
-                    {/*<PlaneIcon className="h-6 w-6" />*/}
                     <img
                         src="/falcon.svg"
                         alt="falcon"
@@ -14,9 +23,14 @@ export default async function UnauthedNavbar() {
                     />
                 </Link>
             </nav>
-            {/*<div className="float-right">*/}
-            {/*    <LoginDialog />*/}
-            {/*</div>*/}
+            <div className="flex flex-row justify-end items-center space-x-4">
+                <div className="hover:cursor-pointer z-10" onClick={() => toggleSearch(!isSearch)}>
+                    {isSearch ? <MapIcon/> : <SearchIcon/>}
+                </div>
+                <div className="hover:cursor-pointer z-10" onClick={() => toggleResults(!isResultsExpanded)}>
+                    <HamburgerMenuIcon/>
+                </div>
+            </div>
         </header>
     )
 }

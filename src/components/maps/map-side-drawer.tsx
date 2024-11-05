@@ -5,7 +5,7 @@ import {ItineraryProps} from "@/components/itinerary/types";
 import {createClient} from "@/lib/supabase/client";
 import {FalconLocation} from "@/components/maps/types";
 import MapComponent from "@/components/maps/map";
-import MapBox from "@/components/maps/map-box";
+import {MapBox} from "@/components/maps/map-box";
 
 type MapSideDrawerProps = {
     itinerary: ItineraryProps
@@ -71,7 +71,7 @@ export default function MapSideDrawer({initialLocations, itinerary}: MapSideDraw
 
     return (
         <div className="relative w-full">
-            <MapBox itinerary={itinerary} locations={locations}/>
+            {/*<MapBox itinerary={itinerary} locations={locations}/>*/}
         </div>
     )
 };

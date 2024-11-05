@@ -41,6 +41,16 @@
       display: none;
     }
 
+      .mapboxgl-popup-close-button {
+        display: none;
+      }
+
+      .mapboxgl-popup-content {
+        background-color: #007CFF;
+        color: white;
+        line-height: 10px;
+      }
+
       .gm-style-mtc {
         display: none;
       }
@@ -55,6 +65,32 @@
             z-index: 1050 !important;
           }
         }
+      }
+
+      .MuiAutocomplete-root {
+        border-radius: 50px;
+      }
+
+      .MuiPopper-root.MuiAutocomplete-popper {
+        width: 50%;
+        border-radius: 50px;
+      }
+
+      .MuiOutlinedInput-notchedOutline {
+        border: none;
+      }
+
+      .MuiAutocomplete-noOptions {
+        display: none;
+      }
+
+      .MuiButtonBase-root {
+        display: none;
+      }
+
+      .mapboxgl-canvas-container {
+        height: 100vh;
+        width: 100vw;
       }
 
       .rbc-calendar {

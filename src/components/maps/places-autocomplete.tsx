@@ -80,7 +80,6 @@ export const GooglePlacesAutocomplete = React.forwardRef<HTMLInputElement, Googl
 
         autoComplete.addListener('place_changed', () => {
             const place = autoComplete.getPlace()
-            console.log(place)
 
             if (place?.geometry && place.geometry.location) {
                 const country = getCountryCode(place.address_components);

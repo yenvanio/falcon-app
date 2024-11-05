@@ -64,7 +64,6 @@ export function ItineraryUsersList({itinerary_id, initial_users}: ItineraryUsers
             p_role: "COLLABORATOR",
         }).then((data: any, error: any) => {
             if (error) console.error(error)
-            else console.log(data)
         })
     }
 
