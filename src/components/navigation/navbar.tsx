@@ -8,7 +8,7 @@ export default async function Navbar() {
 
     return (
         <>
-            {user.data.user ? <AuthedNavbar user={user.data.user}/> : <UnauthedNavbar/>}
+            {/*{user.data.user ? <AuthedNavbar user={user.data.user}/> : <UnauthedNavbar/>}*/}
         </>
     )
 }
