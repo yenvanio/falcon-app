@@ -13,6 +13,7 @@ export async function GET(request: Request) {
 
     try {
         const amadeus = new Amadeus({
+            hostname: process.env.NODE_ENV === 'development' ? 'test' : 'production',
             clientId: process.env.NEXT_PUBLIC_AMADEUS_CLIENT_ID!,
             clientSecret: process.env.NEXT_PUBLIC_AMADEUS_CLIENT_SECRET!,
         });
