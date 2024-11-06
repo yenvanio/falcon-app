@@ -7,7 +7,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const limit = searchParams.get('limit');
     const offset = searchParams.get('offset');
-    const subType = 'AIRPORT'
+    const subType = 'AIRPORT,CITY'
     const keyword = searchParams.get('keyword');
 
     if (!keyword) {
