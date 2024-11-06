@@ -3,6 +3,7 @@
 import React, {useRef, useState} from "react";
 import {AirportSearch} from "@/components/discover/airport-search";
 import UnauthedNavbar from "@/components/navigation/unauthed-navbar";
+import FalconAdButton from "@/components/discover/falcon-ad-button";
 
 export default function Home() {
     const [isSearch, setIsSearch] = useState<boolean>(true)
@@ -19,6 +20,7 @@ export default function Home() {
                     </div>
                 </div>
             </div>
+            <FalconAdButton/>
         </main>
     );
 }

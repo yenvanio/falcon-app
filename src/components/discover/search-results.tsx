@@ -61,7 +61,7 @@ export const DiscoverSearchResults = React.forwardRef<HTMLDivElement, SearchResu
                 <h2 className="p-4 text-md font-bold">
                     {mapCenter.title !== "" ? `Destinations from ${mapCenter.title}` : "Search for an Airport"}
                 </h2>
-                <div className="overflow-y-auto max-h-[calc(100vh-144px)] px-4">
+                <div className="overflow-y-auto max-h-[calc(100vh-200px)] px-4">
                     <ul className="space-y-2">
                         {locations.map((location, index) => (
                             <li
