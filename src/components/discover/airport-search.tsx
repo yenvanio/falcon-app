@@ -2,7 +2,7 @@
 
 import {LocationProps, MapBox} from "@/components/maps/map-box";
 import {DiscoverSearchBar} from "@/components/discover/search-bar";
-import {Dispatch, SetStateAction, useState} from "react";
+import {Dispatch, MutableRefObject, SetStateAction, useEffect, useState} from "react";
 import {Loader2} from "lucide-react";
 import axios from "axios";
 import {toast} from "@/components/ui/use-toast";
@@ -13,11 +13,12 @@ const CancelToken = axios.CancelToken;
 interface AirportSearchProps {
     isSearch: boolean
     isResultsExpanded: boolean
+    menuIconRef: React.RefObject<HTMLDivElement>
     toggleSearch: Dispatch<SetStateAction<boolean>>
     toggleResults: Dispatch<SetStateAction<boolean>>
 }
 
-export const AirportSearch = ({isSearch, isResultsExpanded, toggleSearch, toggleResults}: AirportSearchProps) => {
+export const AirportSearch = ({isSearch, isResultsExpanded, menuIconRef, toggleSearch, toggleResults}: AirportSearchProps) => {
     const [mapCenter, setMapCenter] = useState({latitude: 0, longitude: 0, title: ""});
     const [mapCenterLocationId, setMapCenterLocationId] = useState(-1)
     const [prevMapCenterLocationId, setPrevMapCenterLocationId] = useState(-1)
@@ -73,8 +74,8 @@ export const AirportSearch = ({isSearch, isResultsExpanded, toggleSearch, toggle
                 <Loader2 className="h-24 w-24 animate-spin text-primary absolute top-1/2 left-1/2 z-10"/>
             )}
 
-            <DiscoverSearchResults locations={destinations} mapCenter={mapCenter} showResults={isResultsExpanded}
-                                   onClose={() => {toggleResults(!isResultsExpanded)}} onResultSelected={onDestinationSelected}/>
+            <DiscoverSearchResults locations={destinations} mapCenter={mapCenter} showResults={isResultsExpanded} menuIconRef={menuIconRef}
+                                   onClose={() => {toggleResults(false)}} onResultSelected={onDestinationSelected}/>
 
             <MapBox locations={destinations} mapCenterLocationId={mapCenterLocationId} prevMapCenterLocationId={prevMapCenterLocationId} mapCenter={mapCenter}/>
         </div>

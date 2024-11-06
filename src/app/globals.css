@@ -51,6 +51,16 @@
         line-height: 10px;
       }
 
+      .floating-icons {
+        position: fixed;
+        right: 20px; /* Adjust as needed */
+        transition: margin-left 0.3s ease; /* Smooth transition */
+      }
+
+      .shift-left {
+        margin-left: -300px; /* Adjust according to your drawer width */
+      }
+
       .gm-style-mtc {
         display: none;
       }

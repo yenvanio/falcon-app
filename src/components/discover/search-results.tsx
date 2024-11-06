@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef } from "react";
+import React, { MutableRefObject, useEffect, useRef } from "react";
 import { LocationProps } from "@/components/maps/map-box";
 import clsx from "clsx";
 
@@ -14,17 +14,19 @@ interface SearchResultProps extends React.HTMLAttributes<HTMLDivElement> {
     showResults: boolean;
     onClose: () => void;
     onResultSelected: (index: number) => void;
+    menuIconRef: React.RefObject<HTMLDivElement>
 }
 
 export const DiscoverSearchResults = React.forwardRef<HTMLDivElement, SearchResultProps>(
-    ({ className, mapCenter, locations,
-         showResults, onClose, onResultSelected, ...props }, ref) => {
+    ({ className, mapCenter, locations, showResults, onClose, onResultSelected, menuIconRef, ...props }, ref) => {
         const panelRef = useRef<HTMLDivElement>(null);
 
-        // Close panel if clicked outside
         useEffect(() => {
             const handleClickOutside = (event: MouseEvent) => {
-                if (panelRef.current && !panelRef.current.contains(event.target as Node)) {
+                const clickedOutsidePanel = panelRef.current && !panelRef.current.contains(event.target as Node);
+                const clickedOutsideNavbar = menuIconRef.current && !menuIconRef.current.contains(event.target as Node);
+
+                if (clickedOutsidePanel && clickedOutsideNavbar) {
                     onClose();
                 }
             };
@@ -39,10 +41,10 @@ export const DiscoverSearchResults = React.forwardRef<HTMLDivElement, SearchResu
         }, [showResults, onClose]);
 
         const panelClasses = clsx(
-            "fixed top-0 right-0 w-80 h-full bg-[#0f172a] text-white shadow-lg transform transition-transform duration-300 ease-in-out z-50",
+            "fixed top-[72px] right-0 w-80 h-[calc(100vh-72px)] bg-[#0f172a] text-white shadow-lg transform transition-transform duration-300 ease-in-out z-50",
             {
-                "translate-x-0": showResults,    // Show when true
-                "translate-x-full": !showResults // Hide when false
+                "translate-x-0": showResults,
+                "translate-x-full": !showResults
             },
             className
         );
@@ -57,14 +59,16 @@ export const DiscoverSearchResults = React.forwardRef<HTMLDivElement, SearchResu
                     ✕
                 </button>
                 <h2 className="p-4 text-md font-bold">
-                    { mapCenter.title !== "" ? `Destinations from ${mapCenter.title}` : "Search for an Airport" }
+                    {mapCenter.title !== "" ? `Destinations from ${mapCenter.title}` : "Search for an Airport"}
                 </h2>
-                <div className="overflow-y-auto max-h-full px-4 py-2">
+                <div className="overflow-y-auto max-h-[calc(100vh-144px)] px-4">
                     <ul className="space-y-2">
                         {locations.map((location, index) => (
-                            <li key={index} className="p-2 border-b border-gray-600 hover:cursor-pointer" onClick={() => {
-                                onResultSelected(location.id)
-                            }}>
+                            <li
+                                key={index}
+                                className="p-2 border-b border-gray-600 hover:cursor-pointer"
+                                onClick={() => onResultSelected(index)}
+                            >
                                 {location.title}
                             </li>
                         ))}
