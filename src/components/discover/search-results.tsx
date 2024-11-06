@@ -1,8 +1,10 @@
 'use client'
 
-import React, { MutableRefObject, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import { LocationProps } from "@/components/maps/map-box";
 import clsx from "clsx";
+import { Loader2 } from "lucide-react"; // Import Loader2
 
 interface SearchResultProps extends React.HTMLAttributes<HTMLDivElement> {
     locations: LocationProps[];
@@ -20,6 +22,45 @@ interface SearchResultProps extends React.HTMLAttributes<HTMLDivElement> {
 export const DiscoverSearchResults = React.forwardRef<HTMLDivElement, SearchResultProps>(
     ({ className, mapCenter, locations, showResults, onClose, onResultSelected, menuIconRef, ...props }, ref) => {
         const panelRef = useRef<HTMLDivElement>(null);
+        const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+        const [highlights, setHighlights] = useState<{ [key: number]: { pros: string[], cons: string[] } }>({});
+        const [loading, setLoading] = useState<{ [key: number]: boolean }>({});
+
+        // Fetch highlights from OpenAI API
+        const fetchCityHighlights = async (cityName: string, index: number) => {
+            setLoading((prev) => ({ ...prev, [index]: true })); // Set loading state
+            try {
+                const response = await axios.post('/api/getCityHighlights', {
+                    city: cityName
+                });
+
+                const { pros, cons } = response.data;
+                setHighlights((prev) => ({
+                    ...prev,
+                    [index]: { pros, cons }
+                }));
+            } catch (error) {
+                console.error("Error fetching city highlights:", error);
+            } finally {
+                setLoading((prev) => ({ ...prev, [index]: false })); // Remove loading state
+            }
+        };
+
+        // Handle item selection with expand/collapse logic and API call
+        const handleItemClick = async (index: number) => {
+            onResultSelected(index);
+
+            if (expandedIndex === index) {
+                // Collapse if clicked again
+                setExpandedIndex(null);
+            } else {
+                // Expand and fetch highlights if needed
+                setExpandedIndex(index);
+                if (!highlights[index]) {
+                    await fetchCityHighlights(locations[index].title, index);
+                }
+            }
+        };
 
         useEffect(() => {
             const handleClickOutside = (event: MouseEvent) => {
@@ -64,12 +105,32 @@ export const DiscoverSearchResults = React.forwardRef<HTMLDivElement, SearchResu
                 <div className="overflow-y-auto max-h-[calc(100vh-200px)] px-4">
                     <ul className="space-y-2">
                         {locations.map((location, index) => (
-                            <li
-                                key={index}
-                                className="p-2 border-b border-gray-600 hover:cursor-pointer"
-                                onClick={() => onResultSelected(index)}
-                            >
-                                {location.title}
+                            <li key={index} className="border-b border-gray-600">
+                                <div
+                                    className="p-2 flex items-center hover:cursor-pointer"
+                                    onClick={() => handleItemClick(index)}
+                                >
+                                    <span>{location.title}</span>
+                                    {loading[index] && (
+                                        <Loader2 className="ml-2 animate-spin text-gray-400" />
+                                    )}
+                                </div>
+                                {expandedIndex === index && highlights[index] && (
+                                    <div className="p-2 bg-gray-700 text-sm text-gray-200">
+                                        <h3 className="font-semibold">Pros:</h3>
+                                        <ul className="list-disc list-inside">
+                                            {highlights[index].pros.map((pro, idx) => (
+                                                <li key={idx}>{pro}</li>
+                                            ))}
+                                        </ul>
+                                        <h3 className="font-semibold mt-2">Cons:</h3>
+                                        <ul className="list-disc list-inside">
+                                            {highlights[index].cons.map((con, idx) => (
+                                                <li key={idx}>{con}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
                             </li>
                         ))}
                     </ul>
