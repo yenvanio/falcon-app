@@ -34,6 +34,7 @@ export async function GET(request: Request) {
         let locations: LocationProps[] = []
         let i = 0;
         for (const airport of response.data) {
+            if (airport.subType == 'CITY') continue;
             locations[i] = {
                 id: i,
                 title: toTitleCase(airport.address?.cityName ?? "") + ", (" + airport.iataCode + ")",
