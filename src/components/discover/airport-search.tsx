@@ -48,7 +48,7 @@ export const AirportSearch = ({isSearch, isResultsExpanded, menuIconRef, toggleS
                 description: "No Destinations Found for this Airport",
             });
 
-            setMapCenter({latitude: 0, longitude: 0, title: ""});
+            setDestinations([])
 
             if (err instanceof Error) {
                 console.log('Request failed:', err.message);

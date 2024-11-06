@@ -41,7 +41,7 @@ export const DiscoverSearchResults = React.forwardRef<HTMLDivElement, SearchResu
         }, [showResults, onClose]);
 
         const panelClasses = clsx(
-            "fixed top-[72px] right-0 w-80 h-[calc(100vh-72px)] bg-[#0f172a] text-white shadow-lg transform transition-transform duration-300 ease-in-out z-50",
+            "fixed top-[60px] right-0 w-80 h-[calc(100vh-60px)] bg-[#0f172a] text-white shadow-lg transform transition-transform duration-300 ease-in-out z-50",
             {
                 "translate-x-0": showResults,
                 "translate-x-full": !showResults
